@@ -63,7 +63,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[randomKey] = req.body.longURL; 
   console.log(urlDatabase);
   
-  res.redirect(`/urls/${randomKey}`); // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${randomKey}`); 
 });
 
 app.get("/urls/:shortURL", (req, res) => {
