@@ -63,23 +63,23 @@ app.post("/urls", (req, res) => {
   urlDatabase[randomKey] = req.body.longURL; 
   console.log(urlDatabase);
   
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${randomKey}`); // Respond with 'Ok' (we will replace this)
 });
 
-
-
+app.get("/urls/:shortURL", (req, res) => {
+  let shortURL = req.params.shortURL;
+  let longURL = urlDatabase[shortURL];
+  res.render("urls_show", {
+    longURL,
+    shortURL
+  });
+});
 
 app.get("/u/:shortURL", (req, res) => {
-  let shortURL =  req.params.shortURL;
+
   let longURL = urlDatabase[shortURL];
-
-    res.redirect(longURL);
-
-  // res.render("urls_show", 
-  // {
-  //   shortURL,
-  //   longURL
-  // });
+    
+  res.redirect(longURL)
 });
 
 
