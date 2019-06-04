@@ -1,4 +1,4 @@
-
+//'use-strict';
 
 const express = require("express");
 const app = express();
@@ -27,29 +27,15 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  // let shortURL =  req.params.shortURL;
+  let shortURL =  req.params.shortURL;
+  let longURL = urlDatabase[shortURL];
 
-  // res.render("urls_show", shortURL)
-
-  // res.render("urls_show", templateVars);
+  res.render("urls_show", 
+  {
+    shortURL,
+    longURL
+  });
 });
-
-// app.get("/urls", (req, res) => {
-//   let templateVars = {
-//     urls: urlDatabase
-//   };
-
-//   let urls = templateVars.urls;
-
-//   for (let url in urls) {
-//     let shortForm = url;
-//     let longForm = urls[shortForm];
-//     res.render({shortForm, longForm});
-    
-//   }
-
-//   res.render("urls_index", templateVars);
-// });
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
