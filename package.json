@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/jo-wood/tinyApp#readme",
   "dependencies": {
+    "ejs": "^2.6.1",
     "express": "^4.17.1"
   },
   "devDependencies": {
