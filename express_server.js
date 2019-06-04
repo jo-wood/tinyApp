@@ -19,6 +19,16 @@ app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase
   };
+
+  let urls = templateVars.urls;
+
+  for (let url in urls) {
+    let shortForm = url;
+    let longForm = urls[shortForm];
+    console.log('short = ' + shortForm, 'long = ' + longForm);
+    
+  }
+
   res.render("urls_index", templateVars);
 });
 
