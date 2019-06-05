@@ -44,27 +44,30 @@ function findURL(key){
 app.post('/login', (req, res) => {
   let user = req.body.username;
   
-  if (req.cookies){
+  if (user === req.cookies.username) {
     console.log('welcome back!' + user);
   } else {
-    res.cookie(user);
+    res.cookie('username', user);
+    res.redirect('/urls');
   }
 });
 
 app.get("/urls", (req, res) => {
   let templateVars = {
+    username: req.cookies.username,
     urls: urlDatabase
   };
 
-  let urls = templateVars.urls;
+  let {urls, username} = templateVars;  
 
-  res.render("urls_index", { urls });
+
+  res.render("urls_index", { urls , username });
 });
 
 
 app.get("/urls/new", (req, res) => {
-
-  res.render("urls_new");
+let username = req.cookies.username;
+  res.render("urls_new", username);
 });
 
 
@@ -80,10 +83,12 @@ app.post("/urls", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let {shortURL} = req.params;
   let longURL = urlDatabase[shortURL];
+  let username = req.cookies.username;
 
   res.render("urls_show", {
     longURL,
-    shortURL
+    shortURL,
+    username
   });
 });
 
@@ -113,6 +118,12 @@ app.post("/urls/:shortURL/update", (req, res) => {
   urlDatabase[shortURL] = updatedLong;
   res.redirect('/urls');
 });
+
+app.post('/logout', (req, res) => {
+  console.log('User logged out');
+  res.clearCookie('username');
+  res.redirect('/urls');
+})
 
 
 

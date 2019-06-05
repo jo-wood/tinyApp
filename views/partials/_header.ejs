@@ -13,6 +13,7 @@
 
   <header>
     <h1>TinyURL App!</h1>
+  <% if (!username) { %>
     <form class="form-login" action="/login" method="POST">
       <div class="form-group mb-2">
         <label for="username">Username:</label>
@@ -20,4 +21,12 @@
         <button type="submit" class="btn btn-primary">Login</button>
       </div>
     </form>
+ <% } else { %>
+    <p>
+      Hi <%= username %> !
+    </p>
+    <form action="/logout" method="POST">
+      <input type="submit" name='logout'>
+    </form>
+  <% } %>
   </header>
