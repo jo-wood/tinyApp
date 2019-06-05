@@ -30,6 +30,13 @@ function generateRandomString(){
   return randomString;
 }
 
+function findURL(key){
+  for (let url in urlDatabase){
+    if (url === key) {
+      delete urlDatabase[key];
+      return;
+}}}
+
 
 app.get("/urls", (req, res) => {
   let templateVars = {
@@ -59,7 +66,6 @@ app.post("/urls", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
-  console.log(urlDatabase);
 
   res.render("urls_show", {
     longURL,
@@ -67,6 +73,14 @@ app.get("/urls/:shortURL", (req, res) => {
   });
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  let shortURL = req.params.shortURL;
+  findURL(shortURL);
+  
+  console.log(urlDatabase);
+
+  res.redirect('/urls');
+});
 
 app.get("/u/:shortURL", (req, res) => {
 

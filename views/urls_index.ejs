@@ -32,6 +32,11 @@
         </a>
       <%= longForm %>
       </li>
+    <form method="POST" action="/urls/<%= shortForm %>/delete">
+      <label for="delete this url"">
+      <input name="<%= shortForm %>" type="submit" value="Delete">
+    </label>
+    </form>
 
     </ul>
     <% } %>
