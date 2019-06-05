@@ -64,7 +64,7 @@ app.post("/urls", (req, res) => {
 
 
 app.get("/urls/:shortURL", (req, res) => {
-  let shortURL = req.params.shortURL;
+  let {shortURL} = req.params;
   let longURL = urlDatabase[shortURL];
 
   res.render("urls_show", {
@@ -74,7 +74,9 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  let shortURL = req.params.shortURL;
+  console.log(Object.keys(req.body));
+  
+  let shortURL = Object.keys(req.body)[0];
   findURL(shortURL);
   
   console.log(urlDatabase);
