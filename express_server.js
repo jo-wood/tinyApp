@@ -2,6 +2,8 @@
 
 const express = require("express");
 const app = express();
+const cookieParser = require('cookie-parser');
+
 const PORT = 8080; // default port 8080
 
 const bodyParser = require("body-parser");
@@ -9,6 +11,8 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
+app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 
@@ -37,21 +41,33 @@ function findURL(key){
       return;
 }}}
 
+app.post('/login', (req, res) => {
+  let user = req.body.username;
+  
+  if (user === req.cookies.username) {
+    console.log('welcome back!' + user);
+  } else {
+    res.cookie('username', user);
+    res.redirect('/urls');
+  }
+});
 
 app.get("/urls", (req, res) => {
   let templateVars = {
+    username: req.cookies.username,
     urls: urlDatabase
   };
 
-  let urls = templateVars.urls;
+  let {urls, username} = templateVars;  
 
-  res.render("urls_index", { urls });
+
+  res.render("urls_index", { urls , username });
 });
 
 
 app.get("/urls/new", (req, res) => {
-
-  res.render("urls_new");
+let username = req.cookies.username;
+  res.render("urls_new", username);
 });
 
 
@@ -63,13 +79,16 @@ app.post("/urls", (req, res) => {
 });
 
 
+
 app.get("/urls/:shortURL", (req, res) => {
   let {shortURL} = req.params;
   let longURL = urlDatabase[shortURL];
+  let username = req.cookies.username;
 
   res.render("urls_show", {
     longURL,
-    shortURL
+    shortURL,
+    username
   });
 });
 
@@ -99,6 +118,14 @@ app.post("/urls/:shortURL/update", (req, res) => {
   urlDatabase[shortURL] = updatedLong;
   res.redirect('/urls');
 });
+
+app.post('/logout', (req, res) => {
+  console.log('User logged out');
+  res.clearCookie('username');
+  res.redirect('/urls');
+})
+
+
 
 
 
