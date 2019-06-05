@@ -31,13 +31,6 @@ function generateRandomString(){
 }
 
 
-app.get("/", (req, res) => {
-  res.send("Hey hello!");
-});
-
-
-
-
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase
@@ -49,13 +42,10 @@ app.get("/urls", (req, res) => {
 });
 
 
-
-
 app.get("/urls/new", (req, res) => {
 
   res.render("urls_new");
 });
-
 
 
 app.post("/urls", (req, res) => {
@@ -66,27 +56,30 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${randomKey}`); 
 });
 
+
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let longURL = urlDatabase[shortURL];
+  urlDatabase[shortURL] = longURL;
+
   res.render("urls_show", {
     longURL,
     shortURL
   });
 });
 
+
 app.get("/u/:shortURL", (req, res) => {
 
   let longURL = urlDatabase[shortURL];
     
-  res.redirect(longURL)
+  res.redirect(longURL);
 });
 
 
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
+// app.get("/urls.json", (req, res) => {
+//   res.json(urlDatabase);
+// });
 
 
 app.listen(PORT, () => {
