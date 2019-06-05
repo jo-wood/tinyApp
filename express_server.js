@@ -91,6 +91,16 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.post("/urls/:shortURL/update", (req, res) => {
+  let urlForUpdate = req.body;
+  let shortURL = Object.keys(urlForUpdate);
+  let updatedLong = urlForUpdate[shortURL];
+
+  urlDatabase[shortURL] = updatedLong;
+  res.redirect('/urls');
+});
+
+
 
 // app.get("/urls.json", (req, res) => {
 //   res.json(urlDatabase);

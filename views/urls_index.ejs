@@ -32,12 +32,15 @@
         </a>
       <%= longForm %>
       </li>
+    
+      <a href='/urls/<%=shortForm %>/update' Edit Source URL></a>
+
     <form method="POST" action="/urls/<%= shortForm %>/delete">
       <label for="<%= shortForm %>">
       <input name="<%= shortForm %>" type="submit" value="Delete">
     </label>
-
     </form>
+
 
     </ul>
     <% } %>

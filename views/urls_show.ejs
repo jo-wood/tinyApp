@@ -18,14 +18,16 @@
 
 <body style="font-size:20px; padding:50px;">
 
-    <h3>The short url for 
-      <%= longURL %>
-      :
+    <h3>ShortURL: 
+      <strong><%= shortURL %></strong>
     </h3>
 
-    <p>
-      <%= shortURL %>
-    </p>
+    <form method="POST" id="edit-longFORM" action="/urls/<%= shortURL %>/update">
+      <label for="edit-longURL"></label>
+        <input type="text" name="<%= shortURL %>" placeholder="<%= longURL %>">
+
+      <button type="submit" form="edit-longFORM">Set Update</button>
+    </form>
 
 <button><a href="/urls">Main Page...</a></button>
 
