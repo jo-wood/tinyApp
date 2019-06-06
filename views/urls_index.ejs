@@ -19,9 +19,10 @@
 
   <body style="font-size:20px; padding:50px;">
 
+<% if (userName) { %>
     <h1>Here are your short urls:</h1>
     <button>
-     <a href='/urls/new'>+ new tinyURL</a>
+      <a href='/urls/new'>+ new tinyURL</a>
     </button>
 
     <% for (let url in urls) { %>
@@ -47,6 +48,11 @@
 
     </ul>
     <% } %>
+
+
+ <% } else { %>
+  <h2>Shorten your long URLs to short & readable links. </h2>
+<% } %>
 
   </body>
 

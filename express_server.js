@@ -95,7 +95,6 @@ function checkIfUserExists(userVar, entryValue){
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls", (req, res) => {
-console.log('cookie', req.cookies);
 
   let user = checkIfUserExists('id', req.cookies.user_id);
 
@@ -103,8 +102,6 @@ console.log('cookie', req.cookies);
     userName: user.email,
     urls: urlDatabase
   };
-console.log(templateVars);
-
 
   res.render("urls_index", templateVars );
 });
@@ -215,7 +212,6 @@ app.post('/login', (req, res) => {
 }); 
 
 app.post('/logout', (req, res) => {
-  console.log('User logged out');
   res.clearCookie('user_id');
   res.redirect('/urls');
 });
@@ -252,8 +248,7 @@ app.post('/register', (req, res) => {
       email: email,
       password: password
     };
-    console.log('blah', users);
-    
+
     res.cookie('user_id', id);
     res.redirect('/urls');
   } else {
@@ -280,12 +275,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect('/urls');
 });
 
-console.log(users);
-console.log(urlDatabase);
-
-
 
 
 app.listen(PORT, () => {
-      console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Example app listening on port ${PORT}!`);
 });
