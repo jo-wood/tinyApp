@@ -67,7 +67,7 @@ function checkIfUserExists(userVar, entryValue){
 
     case 'id':
       for (let user in users) {
-        if (entryValue === user) {
+        if (entryValue === users[user].id) {
           return users[user];
           break;
         }
@@ -119,13 +119,22 @@ app.get("/u/:shortURL", (req, res) => {
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls/new", (req, res) => {
-  let userName;
-  if (req.cookies.user_id) {
-    displayUser = checkIfUserExists('id', req.cookies.user_id);
-    username = displayUser.email;
-  }
+  let user = checkIfUserExists('id', req.cookies.user_id)
 
-  res.render("urls_new", { userName });
+  let templateVars = {
+    userName: user.email,
+    urls: urlDatabase
+  };
+
+  //? why does the label wrapping in ejs around input 
+  //? cause a query '?' to get passed on my /urls/new 
+  //? without the label it works 
+
+    res.render("urls_new", templateVars );
+//  else {
+//     res.status(403).send('Must be logged in to create tinyURL');
+//     }
+
 });
 
 //
