@@ -91,21 +91,20 @@ function checkIfUserExists(userVar, entryValue){
 
 app.get("/urls", (req, res) => {
 
-  let userName = null;
-  if (req.cookies.user_id){
-    let displayUser = checkIfUserExists('id', req.cookies.user_id);
-    if (displayUser) {
-      userName = displayUser.email;
-    }
-  }
-
   let templateVars = {
-    userName,
+    userName: req.body.userName,
     urls: urlDatabase
   };
 
-  let { urls } = templateVars;
+  if (req.cookies.user_id){
+    // do these cookies match our userDB
+    let displayUser = checkIfUserExists('id', req.cookies.user_id);
+      // if these cookies match a user display email
+    // associated with that user - no login required
+    templateVars.userName = displayUser.email
+  }
 
+  let { urls, userName } = templateVars;
 
   res.render("urls_index", {
     urls,
@@ -113,10 +112,11 @@ app.get("/urls", (req, res) => {
   });
 });
 
+//
+//
+
 app.get("/u/:shortURL", (req, res) => {
-
   let longURL = urlDatabase[shortURL];
-
   res.redirect(longURL);
 });
 
@@ -124,13 +124,25 @@ app.get("/u/:shortURL", (req, res) => {
 ////                       READ
 ///////////////////////////////////////////////////////////////
 
+app.get("/urls/new", (req, res) => {
+  let displayUser;
+  if (req.cookies.user_id) {
+    displayUser = checkIfUserExists('id', req.cookies.user_id);
+  }
+
+  res.render("urls_new", { userName: displayUser.email });
+});
+
+//
+//
+
 app.get("/urls/:shortURL", (req, res) => {
   let { shortURL } = req.params;
   let longURL = urlDatabase[shortURL];
   let displayUser = checkIfUserExists('id', req.cookies.user_id);
   let userName = null;
 
-  if (displayUser){
+  if (displayUser) {
     userName = displayUser.email;
   }
 
@@ -145,9 +157,7 @@ app.get("/urls/:shortURL", (req, res) => {
 ////                       EDIT
 ///////////////////////////////////////////////////////////////
 
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
-});
+
 
 app.post("/urls", (req, res) => {
   let randomKey = generateRandomString();
@@ -155,6 +165,9 @@ app.post("/urls", (req, res) => {
 
   res.redirect(`/urls/${randomKey}`);
 });
+
+//
+//
 
 app.post("/urls/:shortURL/update", (req, res) => {
   let urlForUpdate = req.body;
@@ -165,30 +178,38 @@ app.post("/urls/:shortURL/update", (req, res) => {
   res.redirect('/urls');
 });
 
+
+
 ////////////////////////////////////////////////////////////////
 ////                       AND
 ///////////////////////////////////////////////////////////////
 
-// LOGIN ROUTES //
+
+////////////////   LOGIN ROUTES   //////////////////
+
 
 app.post('/login', (req, res) => {
 
-  //! where userName is the email !//
-  let userLoggingIn = checkIfUserExists('email', req.body.userName);
+//! where userName is the email !//
+  let userName = req.body.userName;
+  
+  let userLoggingIn = checkIfUserExists('email', userName);
     
   if (userLoggingIn) {
     let userId = userLoggingIn.id;
       // check if returning user has cookies
       if (userId === req.cookies.user_id) {
-        console.log('welcome back ' + user);
+        userName = userLogginIn.email;
       } else {
         //send the user a cookie
         res.cookie('user_id', userId);
         } 
+
+  res.redirect('/urls', { userName } );
+
+  } else {
+    res.status(400).send('No account associated with that email');
   }
-
-  res.redirect('/urls');
-
 });
 
 app.post('/logout', (req, res) => {
@@ -198,11 +219,15 @@ app.post('/logout', (req, res) => {
 });
 
 
-// REGISTER ROUTES//
+////////////////   REGISTER ROUTES   //////////////////
+
 
 app.get('/register', (req, res) => {
   res.render('register');
 });
+
+//
+//
 
 app.post('/register', (req, res) => {
   let email = req.body.email;
@@ -223,7 +248,7 @@ app.post('/register', (req, res) => {
     };
 
     res.cookie('user_id', id);
-    res.redirect('/urls');
+    res.redirect('/urls', { userName: email } );
   }
 
 });
@@ -234,12 +259,14 @@ app.post('/register', (req, res) => {
 ///////////////////////////////////////////////////////////////
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  console.log(Object.keys(req.body));
+
+  let displayUser;
+  if (req.cookies.user_id) {
+    displayUser = checkIfUserExists('id', req.cookies.user_id);
+  }
 
   let shortURL = Object.keys(req.body)[0];
   findURL(shortURL);
-
-  console.log(urlDatabase);
 
   res.redirect('/urls');
 });
