@@ -23,10 +23,10 @@
     </form>
  <% } else { %>
     <p>
-      Hi <%= username %> !
+      Currently logged in as:  <%= username %> !
     </p>
     <form action="/logout" method="POST">
-      <input type="submit" name='logout'>
+      <input type="submit" value="Logout">
     </form>
   <% } %>
   </header>

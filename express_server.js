@@ -78,16 +78,9 @@ function checkIfEmailExists(userVar, entryValue){
 }//checkIfEmailExists
 
 
-app.post('/login', (req, res) => {
-  let user = req.body.username;
-  
-  if (user === req.cookies.username) {
-    console.log('welcome back!' + user);
-  } else {
-    res.cookie('username', user);
-    res.redirect('/urls');
-  }
-});
+////////////////////////////////////////////////////////////////
+////                       BROWSE
+///////////////////////////////////////////////////////////////
 
 app.get("/urls", (req, res) => {
   let templateVars = {
@@ -95,30 +88,33 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase
   };
 
-  let {urls, username} = templateVars;  
+  let {
+    urls,
+    username
+  } = templateVars;
 
 
-  res.render("urls_index", { urls , username });
+  res.render("urls_index", {
+    urls,
+    username
+  });
 });
 
+app.get("/u/:shortURL", (req, res) => {
 
-app.get("/urls/new", (req, res) => {
-let username = req.cookies.username;
-  res.render("urls_new", username);
+  let longURL = urlDatabase[shortURL];
+
+  res.redirect(longURL);
 });
 
-
-app.post("/urls", (req, res) => {
-  let randomKey = generateRandomString();
-  urlDatabase[randomKey] = req.body.longURL; 
-  
-  res.redirect(`/urls/${randomKey}`); 
-});
-
-
+////////////////////////////////////////////////////////////////
+////                       READ
+///////////////////////////////////////////////////////////////
 
 app.get("/urls/:shortURL", (req, res) => {
-  let {shortURL} = req.params;
+  let {
+    shortURL
+  } = req.params;
   let longURL = urlDatabase[shortURL];
   let username = req.cookies.username;
 
@@ -129,22 +125,20 @@ app.get("/urls/:shortURL", (req, res) => {
   });
 });
 
-app.post("/urls/:shortURL/delete", (req, res) => {
-  console.log(Object.keys(req.body));
-  
-  let shortURL = Object.keys(req.body)[0];
-  findURL(shortURL);
-  
-  console.log(urlDatabase);
+////////////////////////////////////////////////////////////////
+////                       EDIT
+///////////////////////////////////////////////////////////////
 
-  res.redirect('/urls');
+app.get("/urls/new", (req, res) => {
+  let username = req.cookies.username;
+  res.render("urls_new", username);
 });
 
-app.get("/u/:shortURL", (req, res) => {
+app.post("/urls", (req, res) => {
+  let randomKey = generateRandomString();
+  urlDatabase[randomKey] = req.body.longURL;
 
-  let longURL = urlDatabase[shortURL];
-    
-  res.redirect(longURL);
+  res.redirect(`/urls/${randomKey}`);
 });
 
 app.post("/urls/:shortURL/update", (req, res) => {
@@ -156,12 +150,28 @@ app.post("/urls/:shortURL/update", (req, res) => {
   res.redirect('/urls');
 });
 
+////////////////////////////////////////////////////////////////
+////                       AND
+///////////////////////////////////////////////////////////////
+
+
+app.post('/login', (req, res) => {
+  let user = req.body.username;
+
+  if (user === req.cookies.username) {
+    console.log('welcome back!' + user);
+  } else {
+    res.cookie('username', user);
+    res.redirect('/urls');
+  }
+});
+
+
 app.post('/logout', (req, res) => {
   console.log('User logged out');
   res.clearCookie('username');
   res.redirect('/urls');
 });
-
 
 app.get('/register', (req, res) => {
   res.render('register');
@@ -172,7 +182,7 @@ app.post('/register', (req, res) => {
   let password = req.body.password;
   let id = generateRandomString();
 
-//* if email or password are empty or email exists in db
+  // if email or password are empty or email exists in db
 
   if (!email || !password) {
     res.status(400).send('Invalid email or password!');
@@ -190,6 +200,45 @@ app.post('/register', (req, res) => {
   }
 
 });
+
+
+////////////////////////////////////////////////////////////////
+////                       DELETE
+///////////////////////////////////////////////////////////////
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  console.log(Object.keys(req.body));
+
+  let shortURL = Object.keys(req.body)[0];
+  findURL(shortURL);
+
+  console.log(urlDatabase);
+
+  res.redirect('/urls');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.listen(PORT, () => {
