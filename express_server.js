@@ -16,6 +16,9 @@ app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 
+
+//    DATABASES:   //
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -33,6 +36,10 @@ const users = {
     password: "dishwasher-funk"
   }
 };
+
+//*************************************************************/
+//**                        HELPER FNs
+//*************************************************************/
 
 //! improve this to include 65-90 & 49-57
 
@@ -54,19 +61,19 @@ function findURL(key){
       return;
 }}}
 
-function checkIfEmailExists(userVar, entryValue){
+function checkIfUserExists(userVar, entryValue){
   for (let user in users) {
     switch (userVar){
 
     case 'id':
       if (entryValue === users[user].id) {
-      return true;
+      return users[user];
       break;
       }
 
     case 'email':
       if (entryValue === users[user].email) {
-      return true;
+      return users[user];
       break;
       }
 
@@ -75,7 +82,7 @@ function checkIfEmailExists(userVar, entryValue){
       break;
   }
 }
-}//checkIfEmailExists
+}//checkIfUserExists
 
 
 ////////////////////////////////////////////////////////////////
@@ -83,20 +90,26 @@ function checkIfEmailExists(userVar, entryValue){
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls", (req, res) => {
+
+  let userName = null;
+  if (req.cookies.user_id){
+    let displayUser = checkIfUserExists('id', req.cookies.user_id);
+    if (displayUser) {
+      userName = displayUser.email;
+    }
+  }
+
   let templateVars = {
-    username: req.cookies.username,
+    userName,
     urls: urlDatabase
   };
 
-  let {
-    urls,
-    username
-  } = templateVars;
+  let { urls } = templateVars;
 
 
   res.render("urls_index", {
     urls,
-    username
+    userName
   });
 });
 
@@ -112,16 +125,19 @@ app.get("/u/:shortURL", (req, res) => {
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls/:shortURL", (req, res) => {
-  let {
-    shortURL
-  } = req.params;
+  let { shortURL } = req.params;
   let longURL = urlDatabase[shortURL];
-  let username = req.cookies.username;
+  let displayUser = checkIfUserExists('id', req.cookies.user_id);
+  let userName = null;
+
+  if (displayUser){
+    userName = displayUser.email;
+  }
 
   res.render("urls_show", {
     longURL,
     shortURL,
-    username
+    userName
   });
 });
 
@@ -130,8 +146,7 @@ app.get("/urls/:shortURL", (req, res) => {
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls/new", (req, res) => {
-  let username = req.cookies.username;
-  res.render("urls_new", username);
+  res.render("urls_new");
 });
 
 app.post("/urls", (req, res) => {
@@ -154,24 +169,36 @@ app.post("/urls/:shortURL/update", (req, res) => {
 ////                       AND
 ///////////////////////////////////////////////////////////////
 
+// LOGIN ROUTES //
 
 app.post('/login', (req, res) => {
-  let user = req.body.username;
 
-  if (user === req.cookies.username) {
-    console.log('welcome back!' + user);
-  } else {
-    res.cookie('username', user);
-    res.redirect('/urls');
+  //! where userName is the email !//
+  let userLoggingIn = checkIfUserExists('email', req.body.userName);
+    
+  if (userLoggingIn) {
+    let userId = userLoggingIn.id;
+      // check if returning user has cookies
+      if (userId === req.cookies.user_id) {
+        console.log('welcome back ' + user);
+      } else {
+        //send the user a cookie
+        res.cookie('user_id', userId);
+        } 
   }
-});
 
+  res.redirect('/urls');
+
+});
 
 app.post('/logout', (req, res) => {
   console.log('User logged out');
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
+
+
+// REGISTER ROUTES//
 
 app.get('/register', (req, res) => {
   res.render('register');
@@ -186,7 +213,7 @@ app.post('/register', (req, res) => {
 
   if (!email || !password) {
     res.status(400).send('Invalid email or password!');
-  } else if (checkIfEmailExists('email', email)) {
+  } else if (checkIfUserExists('email', email)) {
     res.status(400).send('A user with this email already exists.');
   } else {
     users[id] = {
