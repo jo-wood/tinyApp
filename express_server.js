@@ -62,27 +62,32 @@ function findURL(key){
 }}}
 
 function checkIfUserExists(userVar, entryValue){
-  for (let user in users) {
+
     switch (userVar){
 
     case 'id':
-      if (entryValue === users[user].id) {
-      return users[user];
-      break;
+      for (let user in users) {
+        if (entryValue === user) {
+          return users[user];
+          break;
+        }
       }
 
     case 'email':
-      if (entryValue === users[user].email) {
-      return users[user];
-      break;
+      for (let user in users) {
+        if (entryValue === users[user].email) {
+          return users[user];
+          break;
+        }
       }
 
     case 'default':
       return false;
       break;
   }
-}
-}//checkIfUserExists
+
+} //checkIfUserExists
+
 
 
 ////////////////////////////////////////////////////////////////
@@ -90,26 +95,18 @@ function checkIfUserExists(userVar, entryValue){
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls", (req, res) => {
+console.log('cookie', req.cookies);
+
+  let user = checkIfUserExists('id', req.cookies.user_id);
 
   let templateVars = {
-    userName: req.body.userName,
+    userName: user.email,
     urls: urlDatabase
   };
+console.log(templateVars);
 
-  if (req.cookies.user_id){
-    // do these cookies match our userDB
-    let displayUser = checkIfUserExists('id', req.cookies.user_id);
-      // if these cookies match a user display email
-    // associated with that user - no login required
-    templateVars.userName = displayUser.email
-  }
 
-  let { urls, userName } = templateVars;
-
-  res.render("urls_index", {
-    urls,
-    userName
-  });
+  res.render("urls_index", templateVars );
 });
 
 //
@@ -160,7 +157,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 
 
-app.post("/urls", (req, res) => {
+app.post("/urls/new", (req, res) => {
   let randomKey = generateRandomString();
   urlDatabase[randomKey] = req.body.longURL;
 
@@ -189,7 +186,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
 ////////////////   LOGIN ROUTES   //////////////////
 
 app.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login', { users });
 });
 
 app.post('/login', (req, res) => {
@@ -197,26 +194,24 @@ app.post('/login', (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
 
+  let storedUser = checkIfUserExists('email', email);
+  let matchPassword = storedUser.password;
+  let userId = storedUser.id;
+
   // if email or password are empty or email exists in db
 
-  if (!email || !password) {
-    res.status(400).send('Invalid email or password.');
-  } else if (checkIfUserExists('email', email)) {
-    
-      let user  = checkIfUserExists('email', email);
-      let matchPassword = user.password;
-      let userId = user.id;
-
-      if (password === matchPassword ) {
-        res.cookie('user_id', userId);
-        res.redirect('/urls');
-      } else {
-        res.status(403).send('Password is incorrect.');
-        } 
-
-  } else {
-    res.status(403).send('Uh oh, no user with that e-mail exists.');
-  }
+  if (email !== storedUser.email) {
+    res.status(403).send('Uh oh, no user with that e-mail exists.')
+  } 
+  
+  if (email === storedUser.email) {
+    if (password === matchPassword ) {
+      res.cookie('user_id', userId);
+      res.redirect('/urls');
+    } else {
+      res.status(403).send('Password is incorrect.');
+      } 
+  } 
 }); 
 
 app.post('/logout', (req, res) => {
@@ -239,23 +234,30 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
-  let id = generateRandomString();
 
-  // if email or password are empty or email exists in db
+  // if email or password are empty
+  if (!email) {
+    res.status(400).send('Invalid email.');
+  }   
+  if (!password) {
+    res.status(400).send('Invalid password.');
+  }
 
-  if (!email || !password) {
-    res.status(400).send('Invalid email or password!');
-  } else if (checkIfUserExists('email', email)) {
-    res.status(400).send('A user with this email already exists.');
-  } else {
+  let checkEmail = checkIfUserExists('email', email);
+  
+  if (!checkEmail) {
+    let id = generateRandomString();
     users[id] = {
-      id,
-      email,
-      password
+      id: id, 
+      email: email,
+      password: password
     };
-
+    console.log('blah', users);
+    
     res.cookie('user_id', id);
-    res.redirect('/urls', { userName: email } );
+    res.redirect('/urls');
+  } else {
+    res.status(400).send('A user with this email already exists.')
   }
 
 });
@@ -278,26 +280,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect('/urls');
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+console.log(users);
+console.log(urlDatabase);
 
 
 
