@@ -125,12 +125,13 @@ app.get("/u/:shortURL", (req, res) => {
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls/new", (req, res) => {
-  let displayUser;
+  let userName;
   if (req.cookies.user_id) {
     displayUser = checkIfUserExists('id', req.cookies.user_id);
+    username = displayUser.email;
   }
 
-  res.render("urls_new", { userName: displayUser.email });
+  res.render("urls_new", { userName });
 });
 
 //
@@ -187,30 +188,36 @@ app.post("/urls/:shortURL/update", (req, res) => {
 
 ////////////////   LOGIN ROUTES   //////////////////
 
+app.get('/login', (req, res) => {
+  res.render('login');
+});
 
 app.post('/login', (req, res) => {
 
-//! where userName is the email !//
-  let userName = req.body.userName;
-  
-  let userLoggingIn = checkIfUserExists('email', userName);
+  let email = req.body.email;
+  let password = req.body.password;
+
+  // if email or password are empty or email exists in db
+
+  if (!email || !password) {
+    res.status(400).send('Invalid email or password.');
+  } else if (checkIfUserExists('email', email)) {
     
-  if (userLoggingIn) {
-    let userId = userLoggingIn.id;
-      // check if returning user has cookies
-      if (userId === req.cookies.user_id) {
-        userName = userLogginIn.email;
-      } else {
-        //send the user a cookie
+      let user  = checkIfUserExists('email', email);
+      let matchPassword = user.password;
+      let userId = user.id;
+
+      if (password === matchPassword ) {
         res.cookie('user_id', userId);
+        res.redirect('/urls');
+      } else {
+        res.status(403).send('Password is incorrect.');
         } 
 
-  res.redirect('/urls', { userName } );
-
   } else {
-    res.status(400).send('No account associated with that email');
+    res.status(403).send('Uh oh, no user with that e-mail exists.');
   }
-});
+}); 
 
 app.post('/logout', (req, res) => {
   console.log('User logged out');
