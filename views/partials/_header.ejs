@@ -13,20 +13,21 @@
 
   <header>
     <h1>TinyURL App!</h1>
-  <% if (!username) { %>
-    <form class="form-login" action="/login" method="POST">
-      <div class="form-group mb-2">
-        <label for="username">Username:</label>
-        <input class="form-control" type="text" name="username" placeholder="enter user..." style="width: 300px; margin: 1em">
-        <button type="submit" class="btn btn-primary">Login</button>
-      </div>
-    </form>
+  <% if (!userName) { %>
+      <form action="/login" method="GET">
+        <input type="submit" value="Login">
+      </form>
+
+      <form action="/register" method="GET">
+        <input type="submit" value="Register">
+      </form>
+  
  <% } else { %>
     <p>
-      Hi <%= username %> !
+      Currently logged in as: <strong><%= userName %> </strong>
     </p>
     <form action="/logout" method="POST">
-      <input type="submit" name='logout'>
+      <input type="submit" value="Logout">
     </form>
   <% } %>
   </header>
