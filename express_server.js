@@ -21,6 +21,19 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
+};
+
 //! improve this to include 65-90 & 49-57
 
 function generateRandomString(){
@@ -40,6 +53,7 @@ function findURL(key){
       delete urlDatabase[key];
       return;
 }}}
+
 
 app.post('/login', (req, res) => {
   let user = req.body.username;
@@ -123,15 +137,25 @@ app.post('/logout', (req, res) => {
   console.log('User logged out');
   res.clearCookie('username');
   res.redirect('/urls');
-})
+});
 
 
+app.get('/register', (req, res) => {
+  res.render('register');
+});
 
+app.post('/register', (req, res) => {
+  let { username } = req.body;
+  let { password } = req.body;
+  let id = generateRandomString();
 
+  users[id] = { id, username, password};
 
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
-// });
+  res.cookies.user_id = id;
+  console.log(users);
+  
+  res.redirect('/urls');
+});
 
 
 app.listen(PORT, () => {
