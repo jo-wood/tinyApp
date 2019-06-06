@@ -121,19 +121,20 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/new", (req, res) => {
   let user = checkIfUserExists('id', req.cookies.user_id)
 
-  let templateVars = {
-    userName: user.email,
-    urls: urlDatabase
-  };
+  if (user) {
+    let templateVars = {
+      userName: user.email,
+      urls: urlDatabase
+    };
 
-  //? why does the label wrapping in ejs around input 
-  //? cause a query '?' to get passed on my /urls/new 
-  //? without the label it works 
+    //? why does the label wrapping in ejs around input 
+    //? cause a query '?' to get passed on my /urls/new 
+    //? without the label it works 
 
-    res.render("urls_new", templateVars );
-//  else {
-//     res.status(403).send('Must be logged in to create tinyURL');
-//     }
+    res.render("urls_new", templateVars);
+  } else {
+    res.render("login");
+    }
 
 });
 
