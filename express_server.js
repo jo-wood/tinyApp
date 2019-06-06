@@ -88,7 +88,7 @@ function checkIfUserExists(userVar, entryValue){
 
 } //checkIfUserExists
 
-
+//
 
 ////////////////////////////////////////////////////////////////
 ////                       BROWSE
