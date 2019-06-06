@@ -54,6 +54,29 @@ function findURL(key){
       return;
 }}}
 
+function checkIfEmailExists(userVar, entryValue){
+  for (let user in users) {
+    switch (userVar){
+
+    case 'id':
+      if (entryValue === users[user].id) {
+      return true;
+      break;
+      }
+
+    case 'email':
+      if (entryValue === users[user].email) {
+      return true;
+      break;
+      }
+
+    case 'default':
+      return false;
+      break;
+  }
+}
+}//checkIfEmailExists
+
 
 app.post('/login', (req, res) => {
   let user = req.body.username;
@@ -149,12 +172,23 @@ app.post('/register', (req, res) => {
   let password = req.body.password;
   let id = generateRandomString();
 
-  users[id] = { id, email, password };
+//* if email or password are empty or email exists in db
 
-  res.cookie('user_id', id);
-  console.log(users);
-  
-  res.redirect('/urls');
+  if (!email || !password) {
+    res.status(400).send('Invalid email or password!');
+  } else if (checkIfEmailExists('email', email)) {
+    res.status(400).send('A user with this email already exists.');
+  } else {
+    users[id] = {
+      id,
+      email,
+      password
+    };
+
+    res.cookie('user_id', id);
+    res.redirect('/urls');
+  }
+
 });
 
 
