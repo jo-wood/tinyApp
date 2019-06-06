@@ -145,13 +145,13 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  let { username } = req.body;
-  let { password } = req.body;
+  let email = req.body.email;
+  let password = req.body.password;
   let id = generateRandomString();
 
-  users[id] = { id, username, password};
+  users[id] = { id, email, password };
 
-  res.cookies.user_id = id;
+  res.cookie('user_id', id);
   console.log(users);
   
   res.redirect('/urls');
