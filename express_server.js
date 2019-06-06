@@ -67,7 +67,7 @@ function checkIfUserExists(userVar, entryValue){
 
     case 'id':
       for (let user in users) {
-        if (entryValue === user) {
+        if (entryValue === users[user].id) {
           return users[user];
           break;
         }
@@ -88,14 +88,13 @@ function checkIfUserExists(userVar, entryValue){
 
 } //checkIfUserExists
 
-
+//
 
 ////////////////////////////////////////////////////////////////
 ////                       BROWSE
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls", (req, res) => {
-console.log('cookie', req.cookies);
 
   let user = checkIfUserExists('id', req.cookies.user_id);
 
@@ -103,8 +102,6 @@ console.log('cookie', req.cookies);
     userName: user.email,
     urls: urlDatabase
   };
-console.log(templateVars);
-
 
   res.render("urls_index", templateVars );
 });
@@ -122,13 +119,22 @@ app.get("/u/:shortURL", (req, res) => {
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls/new", (req, res) => {
-  let userName;
-  if (req.cookies.user_id) {
-    displayUser = checkIfUserExists('id', req.cookies.user_id);
-    username = displayUser.email;
-  }
+  let user = checkIfUserExists('id', req.cookies.user_id)
 
-  res.render("urls_new", { userName });
+  let templateVars = {
+    userName: user.email,
+    urls: urlDatabase
+  };
+
+  //? why does the label wrapping in ejs around input 
+  //? cause a query '?' to get passed on my /urls/new 
+  //? without the label it works 
+
+    res.render("urls_new", templateVars );
+//  else {
+//     res.status(403).send('Must be logged in to create tinyURL');
+//     }
+
 });
 
 //
@@ -215,7 +221,6 @@ app.post('/login', (req, res) => {
 }); 
 
 app.post('/logout', (req, res) => {
-  console.log('User logged out');
   res.clearCookie('user_id');
   res.redirect('/urls');
 });
@@ -252,8 +257,7 @@ app.post('/register', (req, res) => {
       email: email,
       password: password
     };
-    console.log('blah', users);
-    
+
     res.cookie('user_id', id);
     res.redirect('/urls');
   } else {
@@ -280,12 +284,8 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect('/urls');
 });
 
-console.log(users);
-console.log(urlDatabase);
-
-
 
 
 app.listen(PORT, () => {
-      console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Example app listening on port ${PORT}!`);
 });

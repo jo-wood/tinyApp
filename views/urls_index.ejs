@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+ <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -19,10 +19,11 @@
 
   <body style="font-size:20px; padding:50px;">
 
+<% if (userName) { %>
     <h1>Here are your short urls:</h1>
-    <button>
-     <a href='/urls/new'>+ new tinyURL</a>
-    </button>
+    <form method="GET" action="/urls/new">
+      <input  type="submit" value="create a tinyURL">
+    </form>
 
     <% for (let url in urls) { %>
     <% let shortForm = url  %>
@@ -39,14 +40,18 @@
       <a href='/urls/<%=shortForm %>/update'>Edit Source URL</a>
 
     <form method="POST" action="/urls/<%= shortForm %>/delete">
-      <label for="<%= shortForm %>">
       <input name="<%= shortForm %>" type="submit" value="Delete">
-    </label>
+   
     </form>
 
 
     </ul>
     <% } %>
+
+
+ <% } else { %>
+  <h2>Shorten your long URLs to short & readable links. </h2>
+<% } %>
 
   </body>
 
