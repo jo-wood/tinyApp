@@ -20,8 +20,14 @@ app.set('view engine', 'ejs');
 //    DATABASES:   //
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  b2xVn2: {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "userRandomID"
+  },
+  lsm5xK: {
+      longURL: "http://www.google.com",
+      userID: "user2RandomID"
+  }
 };
 
 const users = {
@@ -88,7 +94,21 @@ function checkIfUserExists(userVar, entryValue){
 
 } //checkIfUserExists
 
-//
+function urlsForUser(userKey){
+  let userUrls = {};
+
+  for (let shortUrl in urlDatabase) {
+    let shortURLObj = urlDatabase[shortUrl];    
+    console.log(typeof shortURLObj.userID);
+    console.log(typeof userKey);
+    
+    if (userKey === shortURLObj.userID) {
+      userUrls[shortUrl] = shortURLObj.longURL;
+    }
+  }
+return userUrls;
+}
+
 
 ////////////////////////////////////////////////////////////////
 ////                       BROWSE
@@ -96,12 +116,17 @@ function checkIfUserExists(userVar, entryValue){
 
 app.get("/urls", (req, res) => {
 
-  let user = checkIfUserExists('id', req.cookies.user_id);
+  let userKey = checkIfUserExists('id', req.cookies.user_id);
+    
+  //return obj of this users short/longs (key/value)
+  let userUrls = urlsForUser(userKey.id);
 
   let templateVars = {
-    userName: user.email,
-    urls: urlDatabase
+    userName: userKey.email,
+    urls: userUrls
   };
+
+  console.log(templateVars);
 
   res.render("urls_index", templateVars );
 });
@@ -110,7 +135,7 @@ app.get("/urls", (req, res) => {
 //
 
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[shortURL];
+  let { longURL } = urlDatabase[shortURL];
   res.redirect(longURL);
 });
 
@@ -119,19 +144,24 @@ app.get("/u/:shortURL", (req, res) => {
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls/new", (req, res) => {
-  let user = checkIfUserExists('id', req.cookies.user_id)
+  let userKey = checkIfUserExists('id', req.cookies.user_id)
 
-  if (user) {
+    if (userKey) {
+    //return obj of this users short/longs (key/value)
+    let userUrls = urlsForUser(userKey.id);
+
     let templateVars = {
-      userName: user.email,
-      urls: urlDatabase
+      userName: userKey.email,
+      urls: userUrls
     };
+    
+    res.render("urls_new", templateVars);
 
     //? why does the label wrapping in ejs around input 
     //? cause a query '?' to get passed on my /urls/new 
     //? without the label it works 
 
-    res.render("urls_new", templateVars);
+
   } else {
     res.render("login");
     }
@@ -143,7 +173,7 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   let { shortURL } = req.params;
-  let longURL = urlDatabase[shortURL];
+  let { longURL } = urlDatabase[shortURL];
   let displayUser = checkIfUserExists('id', req.cookies.user_id);
   let userName = null;
 
@@ -166,7 +196,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls/new", (req, res) => {
   let randomKey = generateRandomString();
-  urlDatabase[randomKey] = req.body.longURL;
+  urlDatabase[randomKey].longURL = req.body.longURL;
 
   res.redirect(`/urls/${randomKey}`);
 });
@@ -179,7 +209,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
   let shortURL = Object.keys(urlForUpdate);
   let updatedLong = urlForUpdate[shortURL];
 
-  urlDatabase[shortURL] = updatedLong;
+  urlDatabase[shortURL].longURL = updatedLong;
   res.redirect('/urls');
 });
 
