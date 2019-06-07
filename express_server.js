@@ -140,14 +140,20 @@ app.get("/u/:shortURL", (req, res) => {
 ///////////////////////////////////////////////////////////////
 
 app.get("/urls/new", (req, res) => {
-  let userKey = checkIfUserExists('id', req.cookies.user_id)
 
-    if (userKey) {
+  let displayUser = checkIfUserExists('id', req.cookies.user_id);
+  let requestingUser = displayUser.email;
+
+  //! only checking that a user_id cookie exists
+  //! would still need to validate if this user is who their
+  //! cookie value says
+
+    if (displayUser) {
     //return obj of this users short/longs (key/value)
-    let userUrls = urlsForUser(userKey.id);
+    let userUrls = urlsForUser(displayUser.id);
 
     let templateVars = {
-      userName: userKey.email,
+      userName: requestingUser,
       urls: userUrls
     };
     
@@ -157,17 +163,16 @@ app.get("/urls/new", (req, res) => {
     //? cause a query '?' to get passed on my /urls/new 
     //? without the label it works 
 
-
-  } else {
-    res.render("login");
-    }
-
+    } else {
+      res.render("login");
+      }
 });
 
 //
 //
 
 app.get("/urls/:shortURL", (req, res) => {
+
   let shortURL = req.params.shortURL;
   let longURL;
 
@@ -198,24 +203,48 @@ app.get("/urls/:shortURL", (req, res) => {
 
 
 app.post("/urls/new", (req, res) => {
-  let randomShort = generateRandomString();
-  urlDatabase[randomShort] = {
-    longURL: req.body.longURL, 
-    userID: req.cookies.user_id
+
+
+  let displayUser = checkIfUserExists('id', req.cookies.user_id);
+
+  //! only checking that a user_id cookie exists
+  //! would still need to validate if this user is who their
+  //! cookie value says
+
+  if (displayUser) {
+    let randomShort = generateRandomString();
+    urlDatabase[randomShort] = {
+      longURL: req.body.longURL,
+      userID: displayUser.id
+    }
+    res.redirect('/urls/' + randomShort);
+  } else {
+    res.render("login");
   }
 
-  res.redirect('/urls/' + randomShort);
+
+
+
 });
 
 //
 //
 
 app.post("/urls/:shortURL/update", (req, res) => {
-  let selectedShortUrl = Object.keys(req.body)[0];
-  let updatedLong = req.body[selectedShortUrl];
 
-  urlDatabase[selectedShortUrl].longURL = updatedLong;
-  res.redirect('/urls');
+  let displayUser = checkIfUserExists('id', req.cookies.user_id);
+
+    if (displayUser) {
+      let selectedShortUrl = Object.keys(req.body)[0];
+      let updatedLong = req.body[selectedShortUrl];
+
+      urlDatabase[selectedShortUrl].longURL = updatedLong;
+      res.redirect('/urls');
+
+    } else {
+      res.status(403).send('Must be logged in');
+    }
+
 });
 
 
