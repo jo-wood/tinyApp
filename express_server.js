@@ -60,7 +60,7 @@ function generateRandomString(){
   return randomString;
 }
 
-function findURL(key){
+function deleteURL(key){
   for (let url in urlDatabase){
     if (url === key) {
       delete urlDatabase[key];
@@ -115,9 +115,9 @@ return userUrls;
 app.get("/urls", (req, res) => {
 
   let userKey = checkIfUserExists('id', req.cookies.user_id);
-    
+  let userId = userKey.id;
   //return obj of this users short/longs (key/value)
-  let userUrls = urlsForUser(userKey.id);
+  let userUrls = urlsForUser(userId);
 
   let templateVars = {
     userName: userKey.email,
@@ -176,8 +176,6 @@ app.get("/urls/:shortURL", (req, res) => {
       longURL = urlDatabase[key].longURL
     }
   }
-
-  console.log(urlDatabase);
     
   let displayUser = checkIfUserExists('id', req.cookies.user_id);
   let userName = null;
@@ -201,25 +199,22 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls/new", (req, res) => {
   let randomShort = generateRandomString();
-
-  Object.assign(urlDatabase, { randomShort: {
-    longURL: req.body.longURL,
+  urlDatabase[randomShort] = {
+    longURL: req.body.longURL, 
     userID: req.cookies.user_id
-  }});
+  }
 
-
-  res.redirect(`/urls/${randomShort}`);
+  res.redirect('/urls/' + randomShort);
 });
 
 //
 //
 
 app.post("/urls/:shortURL/update", (req, res) => {
-  let urlForUpdate = req.body;
-  let shortURL = Object.keys(urlForUpdate);
-  let updatedLong = urlForUpdate[shortURL];
+  let selectedShortUrl = Object.keys(req.body)[0];
+  let updatedLong = req.body[selectedShortUrl];
 
-  urlDatabase[shortURL].longURL = updatedLong;
+  urlDatabase[selectedShortUrl].longURL = updatedLong;
   res.redirect('/urls');
 });
 
@@ -314,15 +309,22 @@ app.post('/register', (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {
 
-  let displayUser;
-  if (req.cookies.user_id) {
-    displayUser = checkIfUserExists('id', req.cookies.user_id);
+
+  let selectedShortUrl = Object.keys(req.body)[0];
+  let userForSelectedShort = urlDatabase[selectedShortUrl].userID;
+
+  let displayUser  = checkIfUserExists('id', req.cookies.user_id);
+  let cookiesUserId = displayUser.id;
+
+  if (userForSelectedShort === cookiesUserId) {
+
+    deleteURL(selectedShortUrl);
+
+    res.redirect('/urls');
+  } else {
+    res.status(400).send('Need to be logged in to delete a URL');
   }
 
-  let shortURL = Object.keys(req.body)[0];
-  findURL(shortURL);
-
-  res.redirect('/urls');
 });
 
 
