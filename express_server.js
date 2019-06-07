@@ -20,11 +20,11 @@ app.set('view engine', 'ejs');
 //    DATABASES:   //
 
 const urlDatabase = {
-  b2xVn2: {
+  "b2xVn2": {
     longURL: "http://www.lighthouselabs.ca",
     userID: "userRandomID"
   },
-  lsm5xK: {
+  "lsm5xK": {
       longURL: "http://www.google.com",
       userID: "user2RandomID"
   }
@@ -99,8 +99,6 @@ function urlsForUser(userKey){
 
   for (let shortUrl in urlDatabase) {
     let shortURLObj = urlDatabase[shortUrl];    
-    console.log(typeof shortURLObj.userID);
-    console.log(typeof userKey);
     
     if (userKey === shortURLObj.userID) {
       userUrls[shortUrl] = shortURLObj.longURL;
@@ -125,8 +123,6 @@ app.get("/urls", (req, res) => {
     userName: userKey.email,
     urls: userUrls
   };
-
-  console.log(templateVars);
 
   res.render("urls_index", templateVars );
 });
@@ -172,8 +168,17 @@ app.get("/urls/new", (req, res) => {
 //
 
 app.get("/urls/:shortURL", (req, res) => {
-  let { shortURL } = req.params;
-  let { longURL } = urlDatabase[shortURL];
+  let shortURL = req.params.shortURL;
+  let longURL;
+
+  for (let key in urlDatabase) {
+    if (key === shortURL) {
+      longURL = urlDatabase[key].longURL
+    }
+  }
+
+  console.log(urlDatabase);
+    
   let displayUser = checkIfUserExists('id', req.cookies.user_id);
   let userName = null;
 
@@ -195,10 +200,15 @@ app.get("/urls/:shortURL", (req, res) => {
 
 
 app.post("/urls/new", (req, res) => {
-  let randomKey = generateRandomString();
-  urlDatabase[randomKey].longURL = req.body.longURL;
+  let randomShort = generateRandomString();
 
-  res.redirect(`/urls/${randomKey}`);
+  Object.assign(urlDatabase, { randomShort: {
+    longURL: req.body.longURL,
+    userID: req.cookies.user_id
+  }});
+
+
+  res.redirect(`/urls/${randomShort}`);
 });
 
 //

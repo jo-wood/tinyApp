@@ -26,22 +26,23 @@
     </form>
 
     <% for (let url in urls) { %>
-    <% let shortForm = Object.keys(urls)  %>
-    <% let longForm = urls[shortForm] %>
+    <% let shortURL = Object.keys(urls)  %>
+    <% let longURL = urls[shortURL] %>
     <ul>
-      <!-- <li>Long: <%= longForm %></li> -->
-      <li>Short:
-        <a href="/urls/<%=shortForm %>" >
-          <%= shortForm %>
-        </a>
-      <%= longForm %>
+      <!-- <li>Long: <%= longURL %></li> -->
+      <li>tiny URL: 
+        <a href="/urls/<%=shortURL %>" > <%= shortURL %> </a> 
+        <ul>
+          <li> for URL: <%= longURL %> </li>
+        </ul>
       </li>
-    
-      <a href='/urls/<%=shortForm %>/update'>Edit Source URL</a>
 
-    <form method="POST" action="/urls/<%= shortForm %>/delete">
-      <input name="<%= shortForm %>" type="submit" value="Delete">
-   
+    
+      <a href='/urls/<%=shortURL %>'>Edit Source URL</a>
+
+    <form method="POST" action="/urls/<%= shortURL %>/delete">
+      <input name="<%= shortURL %>" type="submit" value="Delete">
+  
     </form>
 
 
@@ -49,7 +50,7 @@
     <% } %>
 
 
- <% } else { %>
+<% } else { %>
   <h2>Shorten your long URLs to short & readable links. </h2>
 <% } %>
 
