@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 
 const hashPass = function (password) {
   return bcrypt.hashSync(password, 10);
-}
+};
 
 
 //* hardwire examples of password hashing since no true database yet
@@ -32,6 +32,18 @@ const urlDatabase = {
   }
 };
 
+
+module.exports.hashPass = hashPass;
+module.exports.users = users;
+module.exports.urlDatabase = urlDatabase;
+
+
+
+
+
+
+
+
 //* since server restarts, any new user data gets lost
 //* even upon logout, that current session is completely removed
 
@@ -42,11 +54,11 @@ const urlDatabase = {
 //! note, as soon as server restarts, only hardwired users are retrievable 
 
 
-const currentUser = {
-    id: null,
-    email: null,
-    password: ""
-};
+// const currentUser = {
+//     id: null,
+//     email: null,
+//     password: ""
+// };
 
 
 
@@ -66,9 +78,7 @@ const currentUser = {
 // console.log(bcrypt.compareSync("dishwasher-funk", hardwireUser2Pass)); //returned true
 // console.log(bcrypt.compareSync("diwasher-funk", hardwireUser2Pass)); // returned  false
 
-module.exports.hashPass = hashPass;
-module.exports.users = users;
-module.exports.urlDatabase = urlDatabase;
-module.exports.currentUser = currentUser;
+
+// module.exports.currentUser = currentUser;
 
 

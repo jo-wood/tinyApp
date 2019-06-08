@@ -1,41 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <!-- Semantic UI -  CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"">
+  <title>Register tinyURL</title>
+</head>
 
 
-    <title>Register tinyURL</title>
-  </head>
+  <div class="ui clearing segment" style="background-color:#CFB095; margin-bottom:2%; padding:2% 0 0 5%">
+    <h2 class="ui right floated icon header">
+        <a href="/urls"><i style="color:black" class="hand scissors icon"></i></a>
+        <button class="ui black button"><a style="color:tomato" href="/login">Login</a></button>
+    </h3>
+    <div class="middle aligned content">
+      <div class="ui left floated header">
+        <h1>Register with tinyURL:</h1>
+      </div>
+    </div>
+  </div>
 
-<header style="margin:2% 0 0 5%">
-  <h2 class="ui icon header">
-    <i class="hand scissors icon"></i>
-    <button class="ui black button"><a style="color:tomato" href="/login">Login</a></button>
-  </h2>
-</header>
 
 <body>
 
 <div class="ui middle aligned center aligned grid">
   <div class="column">
-  <h1>Register with tinyURL:</h1>
+
 
   <form id="form-register" class="ui form" action="/register" method="POST">
 
     <div class="item">
-      <h4>Email:</h4>
+      <h4><i class="user icon"></i> Email:</h4>
       <div class="ui input">
         <input class="form-control" type="email" name="email" placeholder="email@email.com" style="width: 200px; margin: 1em">
       </div>
     </div>  
 
     <div class="item">
-      <h4>Password:</h4>
+      <h4> <i class="lock icon"></i> Password:</h4>
       <div class="ui input">
         <input class="form-control" type="password" name="password" style="width: 200px; margin: 1em">
       </div>

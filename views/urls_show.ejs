@@ -17,9 +17,14 @@
   <div class="ui one column stackable center aligned page grid" style="padding:2%">
     <div class="column twelve wide">
 
-      <h2 style="padding:2%">ShortURL: <i class="terminal icon"></i>
-        <span style="color:tomato"><%= shortURL %></span>
+      <h2 style="padding:2%">
+        ShortURL: 
+        <a style="color:tomato" href='/u/<%= shortURL %>'>
+          <i class="terminal icon"></i>
+          <%= shortURL %>
+        </a>
       </h2>
+
 
       <form method="POST" id="edit-longFORM" action="/urls/<%= shortURL %>/update">
         <div class="ui input">

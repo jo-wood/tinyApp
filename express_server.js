@@ -16,10 +16,6 @@ const hashPass = cryptStore.hashPass;
 const users = cryptStore.users;
 const urlDatabase = cryptStore.urlDatabase;
 
-
-//// MIMIC USER COOKIES with session stored data ////
-const currentUser = cryptStore.currentUser;
-
 ////  MIDDLEWARE   ////
 
 const bodyParser = require("body-parser");
@@ -301,10 +297,6 @@ app.post('/login', (req, res) => {
 app.post('/logout', (req, res) => {
   // hardwire the logout of 'cookies' user, but allow user to still exist in users db from registration
   // will only work for added users if server does not restart 
-  
-  currentUser.id = null;
-  currentUser.email = null;
-  currentUser.password = null;
 
   req.session = null;
   res.redirect('/urls');
@@ -327,7 +319,7 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   let email = req.body.email;
-  let inputPassword = req.body.password;
+  let inputPassword = hashPass(req.body.password);
 
   // if email or password are empty
   if (!email) {
@@ -346,16 +338,14 @@ app.post('/register', (req, res) => {
     let id = generateRandomString();
 
     // set props for currentUser obj from cryptStore
-    currentUser.id = id;
-    currentUser.email = email;
-    currentUser.password = hashPass(inputPassword);
 
     // 'store' current user in users db
-    users[id] = currentUser;
+    users[id] = {
+      id: id,
+      email: email,
+      password: inputPassword
+    }
 
-    console.log(currentUser);
-    console.log(users);
-    
     req.session.user_id = id;
     res.redirect('/urls');
 
