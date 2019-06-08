@@ -10,8 +10,9 @@ This demo app runs an HTTP Server that handles requests from the browser by inco
 
 ## Explore tinyApp
 
-!["screenshot description](#)
-!["screenshot description](#)
+!['Main Page (not logged in)'](https://github.com/jo-wood/tinyApp/blob/master/docs/urls_not_logged_in.png)
+!['Login Page'](https://github.com/jo-wood/tinyApp/blob/master/docs/login_pg.png)
+!['Main Page (logged in)'](https://github.com/jo-wood/tinyApp/blob/master/docs/main_img.png)
 
 **DEPENDENCIES:**
 
@@ -26,6 +27,8 @@ This demo app runs an HTTP Server that handles requests from the browser by inco
 
 - Install all dependencies (using the `npm install` command)
 - Run the development web server using the `node express_server.js` command
+  - Open the browser on `http://localhost:8080/urls`
+    - *note the port set is 8080*
 
 ### User Stories
 
@@ -58,6 +61,8 @@ As a twitter reader, I want to be able to visit sites via shortened links, so th
 
 - **Click the *shortURL* to take you to that shortURLs main page
   - From here, **click the shortURL to take you to the real long form link!** Test that your new tinyURL works in the browser!
+
+!['Update the URL Link'](https://github.com/jo-wood/tinyApp/blob/master/docs/short_url_page.png)
 
 
 ### Additional Features
