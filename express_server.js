@@ -27,9 +27,9 @@ app.set('trust proxy', 1);
 
 
 
-//*************************************************************/
-//**                        HELPER FNs
-//*************************************************************/
+////////////////////////////////////////////////////////////////
+////                      HELPER FNs
+///////////////////////////////////////////////////////////////
 
 //! improve this to include 65-90 & 49-57
 
@@ -53,27 +53,27 @@ function deleteURL(key){
 
 function checkIfUserExists(userVar, entryValue){
 
-    switch (userVar){
+  switch (userVar){
 
-    case 'id':
-      for (let user in users) {
-        if (entryValue === users[user].id) {
-          return users[user];
-          break;
-        }
+  case 'id':
+    for (let user in users) {
+      if (entryValue === users[user].id) {
+        return users[user];
+        break;
       }
+    }
 
-    case 'email':
-      for (let user in users) {
-        if (entryValue === users[user].email) {
-          return users[user];
-          break;
-        }
+  case 'email':
+    for (let user in users) {
+      if (entryValue === users[user].email) {
+        return users[user];
+        break;
       }
+    }
 
-    case 'default':
-      return false;
-      break;
+  case 'default':
+    return false;
+    break;
   }
 
 } //checkIfUserExists
@@ -99,6 +99,7 @@ return userUrls;
 app.get("/urls", (req, res) => {
 
   let userKey = checkIfUserExists('id', req.session.user_id);
+  
   let userId = userKey.id;
   //return obj of this users short/longs (key/value)
   let userUrls = urlsForUser(userId);
@@ -238,30 +239,47 @@ app.post("/urls/:shortURL/update", (req, res) => {
 
 ////////////////   LOGIN ROUTES   //////////////////
 
+let password1 = users.userRandomID.hashPass("purple-monkey-dinosaur");
+let password2 = users.user2RandomID.hashPass("dishwasher-funk");
 
 app.get('/login', (req, res) => {
-  res.render('login', { users });
+  res.render('login');
 });
 
 app.post('/login', (req, res) => {
 
   let email = req.body.email;
-  let verifyPassword = bcrypt.compareSync(req.body.password, users.userRandomID.password);
+  let storedUserId = checkIfUserExists('email', email);
 
-  let storedUser = checkIfUserExists('email', email);
-  let userId = storedUser.id;
+  let inputPassword = req.body.password;
+  let verifyPassword;
 
-  // if email or password are empty or email exists in db
+  
+  //! first 2 are hard wired test case:
+  if (storedUserId === 'userRandomID') {
+    let password1 = users.userRandomID.hashPass("purple-monkey-dinosaur");
+    console.log(password1);    
+    verifyPassword = bcrypt.compareSync(inputPassword, password1);
+  } else  if (storedUserId === 'user2RandomID') {
+    let password2 = users.user2RandomID.hashPass("dishwasher-funk");
+    console.log(password2);
+    verifyPassword = bcrypt.compareSync(inputPassword, password2);
+  } 
+    // let hashedPassword = storedUserId.hashPass;
+    // verifyPassword = bcrypt.compareSync(inputPassword, hashedPassword);
+  
 
-  if (email !== storedUser.email) {
+
+  // if email not in db 
+  if (!storedUserId) {
     res.status(403).send('Uh oh, no user with that e-mail exists.')
   } 
   
-  if (email === storedUser.email) {
+  if (storedUserId) {
     if (verifyPassword) {
-      req.session.user_id = userId;
-      res.cookie('user_id', userId);
+      req.session.user_id = storedUserId;
       res.redirect('/urls');
+
     } else {
       res.status(403).send('Password is incorrect.');
       } 
@@ -286,7 +304,8 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   let email = req.body.email;
-  let hashedPassword = hashPass(req.body.password);;
+  let password = req.body.password;
+
   // if email or password are empty
   if (!email) {
     res.status(400).send('Invalid email.');
@@ -295,17 +314,19 @@ app.post('/register', (req, res) => {
     res.status(400).send('Invalid password.');
   }
 
-  let checkEmail = checkIfUserExists('email', email);
+  let returnedUserId = checkIfUserExists('email', email);
   
-  if (!checkEmail) {
+  if (!returnedUserId) {
     let id = generateRandomString();
+    let hashedPassword = hashPass(password);
+
     users[id] = {
       id: id, 
       email: email,
-      password: hashedPassword
+      hashedPassword
     };
 
-    res.cookie('user_id', id);
+    req.session.user_id = id;
     res.redirect('/urls');
   } else {
     res.status(400).send('A user with this email already exists.')
