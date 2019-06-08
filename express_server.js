@@ -27,6 +27,9 @@ app.set('trust proxy', 1);
 
 
 
+
+
+
 ////////////////////////////////////////////////////////////////
 ////                      HELPER FNs
 ///////////////////////////////////////////////////////////////
@@ -92,6 +95,10 @@ return userUrls;
 }
 
 
+
+
+
+
 ////////////////////////////////////////////////////////////////
 ////                       BROWSE
 ///////////////////////////////////////////////////////////////
@@ -121,6 +128,10 @@ app.get("/u/:shortURL", (req, res) => {
   let longURL  = urlDatabase[shortURL].longURL;
   res.redirect(longURL);
 });
+
+
+
+
 
 ////////////////////////////////////////////////////////////////
 ////                       READ
@@ -183,6 +194,10 @@ app.get("/urls/:shortURL", (req, res) => {
   });
 });
 
+
+
+
+
 ////////////////////////////////////////////////////////////////
 ////                       EDIT
 ///////////////////////////////////////////////////////////////
@@ -232,15 +247,17 @@ app.post("/urls/:shortURL/update", (req, res) => {
 
 
 
+
+
+
 ////////////////////////////////////////////////////////////////
 ////                       AND
 ///////////////////////////////////////////////////////////////
 
 
-////////////////   LOGIN ROUTES   //////////////////
 
-let password1 = users.userRandomID.hashPass("purple-monkey-dinosaur");
-let password2 = users.user2RandomID.hashPass("dishwasher-funk");
+
+////////////////   LOGIN ROUTES   //////////////////
 
 app.get('/login', (req, res) => {
   res.render('login');
@@ -255,18 +272,18 @@ app.post('/login', (req, res) => {
   let verifyPassword;
 
   
-  //! first 2 are hard wired test case:
-  if (storedUserId === 'userRandomID') {
-    let password1 = users.userRandomID.hashPass("purple-monkey-dinosaur");
-    console.log(password1);    
-    verifyPassword = bcrypt.compareSync(inputPassword, password1);
-  } else  if (storedUserId === 'user2RandomID') {
-    let password2 = users.user2RandomID.hashPass("dishwasher-funk");
-    console.log(password2);
-    verifyPassword = bcrypt.compareSync(inputPassword, password2);
-  } 
-    // let hashedPassword = storedUserId.hashPass;
-    // verifyPassword = bcrypt.compareSync(inputPassword, hashedPassword);
+  // //! first 2 are hard wired test case:
+  // if (storedUserId === 'userRandomID') {
+  //   let password1 = users.userRandomID.hashPass("purple-monkey-dinosaur");
+  //   console.log(password1);    
+  //   verifyPassword = bcrypt.compareSync(inputPassword, password1);
+  // } else  if (storedUserId === 'user2RandomID') {
+  //   let password2 = users.user2RandomID.hashPass("dishwasher-funk");
+  //   console.log(password2);
+  //   verifyPassword = bcrypt.compareSync(inputPassword, password2);
+  // } 
+  //   // let hashedPassword = storedUserId.hashPass;
+  //   // verifyPassword = bcrypt.compareSync(inputPassword, hashedPassword);
   
 
 
@@ -290,6 +307,9 @@ app.post('/logout', (req, res) => {
   req.session = null;
   res.redirect('/urls');
 });
+
+
+
 
 
 ////////////////   REGISTER ROUTES   //////////////////
@@ -333,6 +353,8 @@ app.post('/register', (req, res) => {
   }
 
 });
+
+
 
 
 ////////////////////////////////////////////////////////////////
