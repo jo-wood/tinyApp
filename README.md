@@ -11,7 +11,6 @@ This demo app runs an HTTP Server that handles requests from the browser by inco
 ## Explore tinyApp
 
 !['Main Page (not logged in)'](https://github.com/jo-wood/tinyApp/blob/master/docs/urls_not_logged_in.png)
-!['Login Page'](https://github.com/jo-wood/tinyApp/blob/master/docs/login_pg.png)
 !['Main Page (logged in)'](https://github.com/jo-wood/tinyApp/blob/master/docs/main_img.png)
 
 **DEPENDENCIES:**
@@ -56,6 +55,8 @@ As a twitter reader, I want to be able to visit sites via shortened links, so th
   - login using these hardwired accounts to see the functionality of adding a new short URL that stays loaded upon logging off through cookie session - log back in to see!
     - email: user@example.com / password: "purple-monkey-dinosaur"
     - email: user2@example.com / password: "dishwasher-funk"
+
+!['Login Page'](https://github.com/jo-wood/tinyApp/blob/master/docs/login_pg.png)
 
 - **Click the `tinyApp` logo to return to the main urls page at any point!**
 
