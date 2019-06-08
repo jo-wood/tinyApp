@@ -4,9 +4,9 @@
 
 #### Goal 
 
-Building a web app using Node that  will allow users to shorten long URLs much like TinyURL.com and bit.ly do.
+This web app uses NodeJS to  allow users to shorten long URLs much like bit.ly.
 
-Build an HTTP Server that handles requests from the browser (client), incorporating the express framework. 
+This demo app runs an HTTP Server that handles requests from the browser by incorporating the express framework.
 
 ## Explore tinyApp
 
@@ -29,19 +29,13 @@ Build an HTTP Server that handles requests from the browser (client), incorporat
 
 ### User Stories
 
-As an avid twitter poster, 
-I want to be able to shorten links 
-so that I can fit more non-link text in my tweets.
+As an avid twitter poster, I want to be able to shorten links so that I can fit more non-link text in my tweets.
 
-As a twitter reader, 
-I want to be able to visit sites via shortened links, 
-so that I can read interesting content.
+I want to know that my password data is secure, and using hashing for verification - I don't ANYONE to have access to my password, even the database.  
 
-(Stretch) As an avid twitter poster, 
-I want to be able to see how many times my subscribers visit my links 
-so that I can learn what content they like.
+As a twitter reader, I want to be able to visit sites via shortened links, so that I can read interesting content.
 
-### Display Requirements
+### Features to Try
 
 - Site Header:
   - if a user is logged in, the header shows:
@@ -51,14 +45,22 @@ so that I can learn what content they like.
     - a link to the login page (/login)
     - a link to the registration page (/register)
 
-### Behaviour Requirements
+- Register!
+  - input an email and password and subsequently use this info to login to the app!
+  - **NOTE! This will login will only last for one session as this app is not currently using an external database
 
-- `GET /`
+- Login
+  - login using these hardwired accounts to see the functionality of adding a new short URL that stays loaded upon logging off through cookie session - log back in to see!
+    - email: user@example.com / password: "purple-monkey-dinosaur"
+    - email: user2@example.com / password: "dishwasher-funk"
 
-  - if user is logged in:
-    - (Minor) redirect to /urls
-  - if user is not logged in:
-    - (Minor) redirect to /login
+- **Click the `tinyApp` logo to return to the main urls page at any point!**
+
+- **Click the *shortURL* to take you to that shortURLs main page
+  - From here, **click the shortURL to take you to the real long form link!** Test that your new tinyURL works in the browser!
+
+
+### Additional Features
 
 - `GET /urls`
 
@@ -70,109 +72,110 @@ so that I can learn what content they like.
       - the short URL's matching long URL
       - an edit button which makes a GET request to /urls/:id
       - a delete button which makes a POST request to /urls/:id/delete
-      - *(Stretch) the date the short URL was created*
-      - *(Stretch) the number of times the short URL was visited*
-      - *(Stretch) the number number of unique visits for the short URL*
-    - (Minor) a link to "Create a New Short Link" which makes a GET request to /urls/new
+    - a link to "Create a New Short Link" which makes a GET request to /urls/new
   - if user is not logged in:
     - returns HTML with a relevant error message
 
--GET /urls/new
+- GET /urls/new
 
--if user is logged in:
--returns HTML with:
--the site header (see Display Requirements above)
--a form which contains:
--a text input field for the original (long) URL
--a submit button which makes a POST request to /urls
--if user is not logged in:
--redirects to the /login page
--GET /urls/:id
+- if user is logged in:
+  - returns HTML with:
+  - the site header (see Display Requirements above)
+- a form which contains:
+  - a text input field for the original (long) URL
+  - a submit button which makes a POST request to /urls
+- if user is not logged in:
+  - redirects to the /login page
 
--if user is logged in and owns the URL for the given ID:
--returns HTML with:
--the site header (see Display Requirements above)
--the short URL (for the given ID)
--a form which contains:
--the corresponding long URL
--an update button which makes a POST request to /urls/:id
--(Stretch) the date the short URL was created
--(Stretch) the number of times the short URL was visited
--(Stretch) the number of unique visits for the short URL
--if a URL for the given ID does not exist:
--(Minor) returns HTML with a relevant error message
--if user is not logged in:
--returns HTML with a relevant error message
--if user is logged it but does not own the URL with the given ID:
--returns HTML with a relevant error message
+- GET /urls/:id
 
--GET /u/:id
+- if user is logged in and owns the URL for the given ID:
+  - returns HTML with:
+  - the site header (see Display Requirements above)
+  - the short URL (for the given ID)
+  - a form which contains:
+  - the corresponding long URL
+  - an update button which makes a POST request to /urls/:id
+- if a URL for the given ID does not exist:
+  - (Minor) returns HTML with a relevant error message
+- if user is not logged in:
+  - returns HTML with a relevant error message
+  - if user is logged it but does not own the URL with the given ID:
+  - returns HTML with a relevant error message
 
--if URL for the given ID exists:
--redirects to the corresponding long URL
--if URL for the given ID does not exist:
--(Minor) returns HTML with a relevant error message
--POST /urls
+- GET /u/:id
 
--if user is logged in:
--generates a short URL, saves it, and associates it with the user
--redirects to /urls/:id, where :id matches the ID of the newly saved URL
--if user is not logged in:
--(Minor) returns HTML with a relevant error message
--POST /urls/:id
+- if URL for the given ID exists:
+  - redirects to the corresponding long URL
 
--if user is logged in and owns the URL for the given ID:
--updates the URL
--redirects to /urls
--if user is not logged in:
--(Minor) returns HTML with a relevant error message
--if user is logged it but does not own the URL for the given ID:
--(Minor) returns HTML with a relevant error message
--POST /urls/:id/delete
--if user is logged in and owns the URL for the given ID:
--deletes the URL
--redirects to /urls
--if user is not logged in:
--(Minor) returns HTML with a relevant error message
--if user is logged it but does not own the URL for the given ID:
--(Minor) returns HTML with a relevant error message
--GET /login
+- POST /urls
 
-if user is logged in:
-(Minor) redirects to /urls
-if user is not logged in:
-returns HTML with:
-a form which contains:
-input fields for email and password
-submit button that makes a POST request to /login
-GET /register
+- if user is logged in:
+- generates a short URL, saves it, and associates it with the user
+- redirects to /urls/:id, where :id matches the ID of the newly saved URL **changed this to redirect to main urls**
+- if user is not logged in:
+  - (Minor) returns HTML with a relevant error message
 
-if user is logged in:
-(Minor) redirects to /urls
-if user is not logged in:
-returns HTML with:
-a form which contains:
-input fields for email and password
-a register button that makes a POST request to /register
-POST /login
+- POST /urls/:id
 
-if email and password params match an existing user:
-sets a cookie
-redirects to /urls
-if email and password params don't match an existing user:
-returns HTML with a relevant error message
-POST /register
+- if user is logged in and owns the URL for the given ID:
+  - updates the URL
+  - redirects to /urls
+- if user is not logged in:
+  - (Minor) returns HTML with a relevant error message
+  - if user is logged it but does not own the URL for the given ID:
+  - (Minor) returns HTML with a relevant error message
 
-if email or password are empty:
-returns HTML with a relevant error message
-if email already exists:
-returns HTML with a relevant error message
-otherwise:
-creates a new user
-encrypts the new user's password with bcrypt
-sets a cookie
-redirects to /urls
-POST /logout
+- POST /urls/:id/delete
+  - if user is logged in and owns the URL for the given ID:
+  - deletes the URL
+  - redirects to /urls
+- if user is not logged in:
+  - (Minor) returns HTML with a relevant error message
+  - if user is logged it but does not own the URL for the given ID:
+  - (Minor) returns HTML with a relevant error message
 
-deletes cookie
-redirects to /urls
+- GET /login
+
+- if user is logged in:
+  - (Minor) redirects to /urls
+- if user is not logged in:
+  - returns HTML with:
+  - a form which contains:
+  - input fields for email and password
+  - submit button that makes a POST request to /login
+
+- GET /register
+
+- if user is logged in:
+  - (Minor) redirects to /urls
+- if user is not logged in:
+  - returns HTML with:
+  - a form which contains:
+  - input fields for email and password
+  - a register button that makes a POST request to /register
+
+- POST /login
+
+- if email and password params match an existing user:
+  - sets a cookie
+  - redirects to /urls
+- if email and password params don't match an existing user:
+  - returns HTML with a relevant error message
+  - POST /register
+
+- if email or password are empty:
+  - returns HTML with a relevant error message
+- if email already exists:
+  - returns HTML with a relevant error message
+
+- otherwise:
+  - creates a new user
+  - encrypts the new user's password with bcrypt
+  - sets a cookie
+  - redirects to /urls
+
+- POST /logout
+
+  - deletes cookie
+  - redirects to /urls
