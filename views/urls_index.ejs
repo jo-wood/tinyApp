@@ -16,11 +16,11 @@
 
   <body style="font-size:20px; padding:50px; background-color:#5A7247">
 
-<div class="content">
-
+<div class="ui middle aligned center aligned grid" style="background-color:#5A7247">
+<div class="column">
 
 <% if (userName) { %>
-    <h1>Here are your short urls:</h1>
+    <h2>Your tinyURLs:</h2>
     <form method="GET" action="/urls/new">
     <i class="code icon"></i><input type="submit" value="create a tinyURL">
     </form>
@@ -59,7 +59,9 @@
 </div>
 <% } %>
 
-  </div>
-  </body>
+  
+</div>
+</div>
+</body>
 
 </html>

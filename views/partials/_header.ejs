@@ -37,15 +37,14 @@
         
   <% } else { %>
   <div class="item">
-    <p>
-    Currently logged in as: <i class="user circle icon"></i> <strong><%= userName %> </strong>
-    </p>
-
-    <form  action="/logout" method="POST">
+    <form action="/logout" method="POST">
       <button class="ui black button" type="submit">Logout</button>
     </form>
-  <% } %>
+    <p> Currently logged in as: <i class="user circle icon"></i> <strong><%= userName %> </strong> </p>
   </div>
+
+  <% } %>
+
 </div>
 </div>
 
