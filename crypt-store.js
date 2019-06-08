@@ -45,9 +45,11 @@ const urlDatabase = {
 const currentUser = {
     id: null,
     email: null,
-    urls:  {},
-    password: null
+    password: function (pass, cb) {
+      return cb(pass);
+    }
 };
+
 
 //* also note, any new user's urls will be stored in this cookie
 //* in theory, also easier to store this session's user data in one obj 
@@ -56,8 +58,8 @@ const currentUser = {
 
 //* hardwire examples of password hashing since no true database yet
 
-let hardwireUser1Pass = users.userRandomID.password;
-let hardwireUser2Pass = users.user2RandomID.password;
+// let hardwireUser1Pass = users.userRandomID.password;
+// let hardwireUser2Pass = users.user2RandomID.password;
 
 
 // console.log(bcrypt.compareSync("purple-monkey-dinosaur", hardwireUser1Pass)); //returned true
@@ -69,6 +71,5 @@ module.exports.hashPass = hashPass;
 module.exports.users = users;
 module.exports.urlDatabase = urlDatabase;
 module.exports.currentUser = currentUser;
-module.exports.hardwireUser1Pass = hardwireUser1Pass;
-module.exports.hardwireUser2Pass = hardwireUser2Pass;
+
 

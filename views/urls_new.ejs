@@ -20,13 +20,13 @@
 
       <h1 style="padding-top:2%">Create TinyURL</h1>
 
-      <form class="form-inline" action="/urls/new" method="POST">
+      <form id='make-tiny' class="form-inline" action="/urls/new" method="POST">
 
         <div class="ui input">
           <input type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
         </div>
 
-        <button type="submit" class="ui black button"><i class="cut icon"></i>tiny me! </button>
+        <button form='make-tiny' type="submit" class="ui black button"><i class="cut icon"></i>tiny me! </button>
 
       </form>
 

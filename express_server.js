@@ -9,12 +9,13 @@ const PORT = 8080; // default port 8080
 const bcrypt = require('bcrypt');
 const cryptStore = require('./crypt-store');
 const hashPass = cryptStore.hashPass;
-const hardwireUser1Pass = cryptStore.hardwireUser1Pass;
-const hardwireUser2Pass = cryptStore.hardwireUser2Pass;
+// const hardwireUser1Pass = cryptStore.hardwireUser1Pass;
+// const hardwireUser2Pass = cryptStore.hardwireUser2Pass;
 
 ////   PRIVATE DATABASES   ////
 const users = cryptStore.users;
 const urlDatabase = cryptStore.urlDatabase;
+
 
 //// MIMIC USER COOKIES with session stored data ////
 const currentUser = cryptStore.currentUser;
@@ -25,10 +26,10 @@ const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieSession( { name: 'session', keys: ['key1', 'key2'] } ));
+app.use(cookieSession( { name: 'session', keys: ['this is a key'] } ));
 
 app.set('view engine', 'ejs');
-app.set('trust proxy', 1);
+
 
 
 
@@ -90,10 +91,8 @@ function urlsForUser(userKey){
   let userUrls = {};
 
   for (let shortUrl in urlDatabase) {
-    let shortURLObj = urlDatabase[shortUrl];    
-    
-    if (userKey === shortURLObj.userID) {
-      userUrls[shortUrl] = shortURLObj.longURL;
+    if (userKey === urlDatabase[shortUrl].userID) {
+      userUrls[shortUrl] = urlDatabase[shortUrl].longURL;
     }
   }
 return userUrls;
@@ -112,9 +111,8 @@ app.get("/urls", (req, res) => {
 
   let userKey = checkIfUserExists('id', req.session.user_id);
   
-  let userId = userKey.id;
   //return obj of this users short/longs (key/value)
-  let userUrls = urlsForUser(userId);
+  let userUrls = urlsForUser(userKey.id);
 
   let templateVars = {
     userName: userKey.email,
@@ -211,23 +209,26 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls/new", (req, res) => {
 
+  // returns the users key (aka users id key for their obj)
+  // handle hardwire cases first as they are also already hardwired in urlDatabase
+  //! any session new users urls will be stored in their urls prop in the users db 
 
   let displayUser = checkIfUserExists('id', req.session.user_id);
 
-  //! only checking that a user_id cookie exists
-  //! would still need to validate if this user is who their
-  //! cookie value says
-
   if (displayUser) {
-    let randomShort = generateRandomString();
-    urlDatabase[randomShort] = {
+
+    let randomShortURL = generateRandomString();
+
+    urlDatabase[randomShortURL] = {
       longURL: req.body.longURL,
       userID: displayUser.id
     }
-    res.redirect('/urls/' + randomShort);
+
+  res.redirect('/urls');
+
   } else {
-    res.render("login");
-  }
+      res.status(403).send('Must be logged in');
+    }
 });
 
 //
@@ -272,50 +273,42 @@ app.post('/login', (req, res) => {
 
   let email = req.body.email;
   let storeUser = checkIfUserExists('email', email);
-  console.log('storeUser = ', storeUser.password);
-
   let inputPassword = req.body.password;
-console.log('inputPassword = ', inputPassword);
-
-  let verifyPassword;
-
-  
-    //! first 2 are hard wired for proof of concept (passwords are actually stored on cryptStore):
-  if (storeUser.id === 'userRandomID') {
-    verifyPassword = bcrypt.compareSync(inputPassword, storeUser.password);
-    
-    console.log(verifyPassword);
-    
-    
-  } else if (storeUser.id === 'user2RandomID') {
-    verifyPassword = bcrypt.compareSync(inputPassword, storeUser.password);
-
-  }
-  //   else {
-  //   let hashedPassword = users[storeUser.id].password;
-  //   verifyPassword = bcrypt.compareSync(inputPassword, hashedPassword);
-  // }
-
+  let verifyPassword = false;
 
   // if email not in db 
   if (!storeUser) {
-    res.status(403).send('Uh oh, no user with that e-mail exists.')
-  } 
-  
-  if (storeUser) {
-    if (verifyPassword) {
-      req.session.user_id = storeUser.id;
-      res.redirect('/urls');
+    res.status(403).send('Uh oh, no user with that e-mail exists.');
+
+      // can't check per session since no true storage of new users in a database, but server still running and can 
+      // therefore check users email in users since currentUser is temporarily stored here too (per registration code)
+
+  } else if (email === storeUser.email) {
+      verifyPassword = bcrypt.compareSync(inputPassword, storeUser.password);
+    
+      // if login user is a hardwired one, set them equal to the 'currentUser'
+
+      if (verifyPassword) {
+        req.session.user_id = storeUser.id;
+        res.redirect('/urls');
+      }
 
     } else {
       res.status(403).send('Password is incorrect.');
-      } 
-  } 
+    }
 }); 
 
 app.post('/logout', (req, res) => {
+  // hardwire the logout of 'cookies' user, but allow user to still exist in users db from registration
+  // will only work for added users if server does not restart 
+  
+  currentUser.id = null;
+  currentUser.email = null;
+  currentUser.password = null;
+
   req.session = null;
   res.redirect('/urls');
+
 });
 
 
@@ -352,21 +345,17 @@ app.post('/register', (req, res) => {
   if (!returnedUserId) {
     let id = generateRandomString();
 
-    currentUser = {
-      id: id, 
-      email: email,
-      password: function(pass, cb){
-        return cb(pass);
-      }
-    };
+    // set props for currentUser obj from cryptStore
+    currentUser.id = id;
+    currentUser.email = email;
+    currentUser.password(inputPassword, hashPass);
 
-    // set a & 'store' hashed password for the current user
-    currentUser.id.password(inputPassword, hashPass);
-    users[currentUser.id] = currentUser;
+    // 'store' current user in users db
+    users[id] = currentUser;
 
+    console.log(currentUser);
     console.log(users);
     
-
     req.session.user_id = id;
     res.redirect('/urls');
 
@@ -389,7 +378,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   let selectedShortUrl = Object.keys(req.body)[0];
   let userForSelectedShort = urlDatabase[selectedShortUrl].userID;
 
-  let displayUser  = checkIfUserExists('id', req.cookies.user_id);
+  let displayUser  = checkIfUserExists('id', req.session.user_id);
   let cookiesUserId = displayUser.id;
 
   if (userForSelectedShort === cookiesUserId) {
