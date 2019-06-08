@@ -11,17 +11,13 @@ const users = {
   "userRandomID": {
     id: "userRandomID",
     email: "user@example.com",
-    password: function (pass, cb) {
-        return cb(pass);
-    }
+    password: hashPass('purple-monkey-dinosaur')
   },
 
   "user2RandomID": {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: function (pass, cb) {
-      return cb(pass);
-    }
+    password: hashPass('dishwasher-funk')
   }
 };
 
@@ -45,29 +41,34 @@ const urlDatabase = {
 
 //! note, as soon as server restarts, only hardwired users are retrievable 
 
+
+const currentUser = {
+    id: null,
+    email: null,
+    urls:  {},
+    password: null
+};
+
 //* also note, any new user's urls will be stored in this cookie
 //* in theory, also easier to store this session's user data in one obj 
 //* rather than constantly iterating through the db obj for any req's made during just 1 session
 
-// const currentUser = {
-//   id : {
-//     id: null,
-//     email: null,
-//     password: hashPass(),
-//     urls = {}
-//   }
-// }
+
+//* hardwire examples of password hashing since no true database yet
+
+let hardwireUser1Pass = users.userRandomID.password;
+let hardwireUser2Pass = users.user2RandomID.password;
 
 
-let password1 = users.userRandomID.password("purple-monkey-dinosaur", hashPass);
-let password2 = users.user2RandomID.password("dishwasher-funk", hashPass);
-
-console.log(bcrypt.compareSync("purple-monkey-dinosaur", password1)); //returned true
-console.log(bcrypt.compareSync("purple-monkeynosaur", password1)); // returned  false
-console.log(bcrypt.compareSync("dishwasher-funk", password2)); //returned true
-console.log(bcrypt.compareSync("diwasher-funk", password2)); // returned  false
+// console.log(bcrypt.compareSync("purple-monkey-dinosaur", hardwireUser1Pass)); //returned true
+// console.log(bcrypt.compareSync("purple-monkeynosaur", hardwireUser1Pass)); // returned  false
+// console.log(bcrypt.compareSync("dishwasher-funk", hardwireUser2Pass)); //returned true
+// console.log(bcrypt.compareSync("diwasher-funk", hardwireUser2Pass)); // returned  false
 
 module.exports.hashPass = hashPass;
 module.exports.users = users;
 module.exports.urlDatabase = urlDatabase;
+module.exports.currentUser = currentUser;
+module.exports.hardwireUser1Pass = hardwireUser1Pass;
+module.exports.hardwireUser2Pass = hardwireUser2Pass;
 

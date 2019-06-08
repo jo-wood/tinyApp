@@ -9,10 +9,15 @@ const PORT = 8080; // default port 8080
 const bcrypt = require('bcrypt');
 const cryptStore = require('./crypt-store');
 const hashPass = cryptStore.hashPass;
+const hardwireUser1Pass = cryptStore.hardwireUser1Pass;
+const hardwireUser2Pass = cryptStore.hardwireUser2Pass;
 
 ////   PRIVATE DATABASES   ////
 const users = cryptStore.users;
 const urlDatabase = cryptStore.urlDatabase;
+
+//// MIMIC USER COOKIES with session stored data ////
+const currentUser = cryptStore.currentUser;
 
 ////  MIDDLEWARE   ////
 
@@ -266,35 +271,40 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
 
   let email = req.body.email;
-  let storedUserId = checkIfUserExists('email', email);
+  let storeUser = checkIfUserExists('email', email);
+  console.log('storeUser = ', storeUser.password);
 
   let inputPassword = req.body.password;
+console.log('inputPassword = ', inputPassword);
+
   let verifyPassword;
 
   
-  // //! first 2 are hard wired test case:
-  // if (storedUserId === 'userRandomID') {
-  //   let password1 = users.userRandomID.hashPass("purple-monkey-dinosaur");
-  //   console.log(password1);    
-  //   verifyPassword = bcrypt.compareSync(inputPassword, password1);
-  // } else  if (storedUserId === 'user2RandomID') {
-  //   let password2 = users.user2RandomID.hashPass("dishwasher-funk");
-  //   console.log(password2);
-  //   verifyPassword = bcrypt.compareSync(inputPassword, password2);
-  // } 
-  //   // let hashedPassword = storedUserId.hashPass;
-  //   // verifyPassword = bcrypt.compareSync(inputPassword, hashedPassword);
-  
+    //! first 2 are hard wired for proof of concept (passwords are actually stored on cryptStore):
+  if (storeUser.id === 'userRandomID') {
+    verifyPassword = bcrypt.compareSync(inputPassword, storeUser.password);
+    
+    console.log(verifyPassword);
+    
+    
+  } else if (storeUser.id === 'user2RandomID') {
+    verifyPassword = bcrypt.compareSync(inputPassword, storeUser.password);
+
+  }
+  //   else {
+  //   let hashedPassword = users[storeUser.id].password;
+  //   verifyPassword = bcrypt.compareSync(inputPassword, hashedPassword);
+  // }
 
 
   // if email not in db 
-  if (!storedUserId) {
+  if (!storeUser) {
     res.status(403).send('Uh oh, no user with that e-mail exists.')
   } 
   
-  if (storedUserId) {
+  if (storeUser) {
     if (verifyPassword) {
-      req.session.user_id = storedUserId;
+      req.session.user_id = storeUser.id;
       res.redirect('/urls');
 
     } else {
@@ -324,30 +334,42 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   let email = req.body.email;
-  let password = req.body.password;
+  let inputPassword = req.body.password;
 
   // if email or password are empty
   if (!email) {
     res.status(400).send('Invalid email.');
   }   
-  if (!password) {
+  if (!inputPassword) {
     res.status(400).send('Invalid password.');
   }
 
+
+  // confirm no other user with same email
   let returnedUserId = checkIfUserExists('email', email);
   
+  // generate new user
   if (!returnedUserId) {
     let id = generateRandomString();
-    let hashedPassword = hashPass(password);
 
-    users[id] = {
+    currentUser = {
       id: id, 
       email: email,
-      hashedPassword
+      password: function(pass, cb){
+        return cb(pass);
+      }
     };
+
+    // set a & 'store' hashed password for the current user
+    currentUser.id.password(inputPassword, hashPass);
+    users[currentUser.id] = currentUser;
+
+    console.log(users);
+    
 
     req.session.user_id = id;
     res.redirect('/urls');
+
   } else {
     res.status(400).send('A user with this email already exists.')
   }
