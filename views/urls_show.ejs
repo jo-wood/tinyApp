@@ -3,35 +3,44 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <!-- Semantic UI -  CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"">
+  <title>TinyApp</title>
+</head>
 
-    <title>TinyApp</title>
-  </head>
+<%- include("partials/_header"); -%>
 
-<header>
-  <%- include("partials/_header"); -%>
-</header>
+<body>
 
-<body style="font-size:20px; padding:50px; background-color:#5A7247">
+  <div class="ui one column stackable center aligned page grid" style="padding:2%">
+    <div class="column twelve wide">
 
-    <h3>ShortURL: <i class="terminal icon"></i>
-      <strong><%= shortURL %></strong>
-    </h3>
+      <h2 style="padding:2%">ShortURL: <i class="terminal icon"></i>
+        <span style="color:tomato"><%= shortURL %></span>
+      </h2>
 
-    <form method="POST" id="edit-longFORM" action="/urls/<%= shortURL %>/update">
-      <label for="edit-longURL"></label>
-        <input type="text" name="<%= shortURL %>" placeholder="<%= longURL %>">
+      <form method="POST" id="edit-longFORM" action="/urls/<%= shortURL %>/update">
+        <div class="ui input">
+          <input type="text" name="<%= shortURL %>" placeholder="<%= longURL %>">
+        </div>
+        <button class="ui black button" type="submit" form="edit-longFORM">
+          <i class="paper plane icon"></i> 
+          Set Update
+        </button>
+      </form>
 
-      <button class="ui black button" type="submit" form="edit-longFORM"><i class="paper plane icon"></i><i
-          class="edit icon"></i> Set
-        Update</button>
-    </form>
 
-<button class="ui black button"><a href="/urls"><i class="archive icon"></i> Main Page...</a></button>
+    </div>
+  </div>
+
+<footer style="background-color:#CFB095; padding:2%">
+  <div class="ui middle aligned center aligned grid" style="padding:2%">
+    <button class="ui black button"><a style="color:white" href="/urls"><i class="archive icon"></i> Main Page...</a></button>
+  </div>
+</footer>
+
 
 </body>
 

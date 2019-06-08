@@ -11,45 +11,51 @@
   <title>TinyApp</title>
 </head>
 
-<header style="background-color:#5A7247">
-<div class="ui menu" style="background-color:#5A7247; border-style:none">
-<div class="ui middle aligned center aligned grid" style="background-color:#5A7247">
+<header style="background-color:#CFB095; padding:2%">
 
-  <h2 class="ui icon header">
-    <i class="hand scissors icon"></i>
-    <span style="color:tomato"> <strong>tinyApp !</strong> </span>
-  </h2>
-
-  <% if (!userName) { %>
+<div class="ui middle aligned divided list">
   <div class="item">
-    <form action="/login" method="GET">
-      <i class="lock icon"></i> 
-      <button class="ui black button" type="submit">Login</button>
-    </form>
-  </div>
 
-  <div class="item">
-    <form action="/register" method="GET">
-      <i class="bell icon"></i> 
-      <button class="ui black button" type="submit">Register</button>
-    </form>
-  </div>
-        
-  <% } else { %>
-  <div class="item">
-    <form action="/logout" method="POST">
-      <button class="ui black button" type="submit">Logout</button>
-    </form>
-    <p> Currently logged in as: <i class="user circle icon"></i> <strong><%= userName %> </strong> </p>
-  </div>
 
-  <% } %>
+<% if (!userName) { %>
+    <div class="right floated content">
+      <div class="ui middle aligned grid">
 
-</div>
+      <div class="item">
+        <form action="/login" method="GET">
+          <i class="lock icon"></i>
+          <button class="ui black button" type="submit">Login</button>
+        </form>
+      </div>
+
+      <div class="item">
+        <form action="/register" method="GET">
+          <i class="bell icon"></i>
+          <button class="ui black button" type="submit">Register</button>
+        </form>
+      </div>
+      
+    </div>
+    </div>
+
+<% } else { %>
+    <div class="right floated content">
+      <div class="ui middle aligned grid">
+        <p> Currently logged in as: <i class="user circle icon"></i> <strong><%= userName %> </strong> </p>
+
+        <form action="/logout" method="POST">
+          <button class="ui black button" type="submit">Logout</button>
+        </form>
+      </div>
+    </div>
+<% } %>
+
+    <h1 class="ui icon">
+      <i class="hand scissors icon"></i>
+      <span style="color:tomato"> <strong>tinyApp !</strong> </span>
+    </h1>
+
+  </div>
 </div>
 
 </header>
-
-<body>
-  
-</body>

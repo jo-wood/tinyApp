@@ -2,66 +2,72 @@
 <!DOCTYPE html>
 <html lang="en">
 
- <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>TinyApp</title>
   <!-- Semantic UI -  CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"">
+</head>
 
-    <title>TinyApp</title>
-  </head>
+  <%- include("partials/_header"); -%>
 
-    <%- include("partials/_header"); -%>
+<body>
 
-  <body style="font-size:20px; padding:50px; background-color:#5A7247">
+<div class="ui one column stackable center aligned page grid" style="padding:2%">
+  <div class="column twelve wide">
+  <!-- <div class="ui middle aligned center aligned grid"> -->
 
-<div class="ui middle aligned center aligned grid" style="background-color:#5A7247">
-<div class="column">
 
 <% if (userName) { %>
-    <h2>Your tinyURLs:</h2>
-    <form method="GET" action="/urls/new">
-    <i class="code icon"></i><input type="submit" value="create a tinyURL">
-    </form>
 
-    <% for (let url in urls) { %>
-    <% let shortURL = url;  %>
-    <% let longURL = urls[shortURL] %>
-    <ul>
-      <!-- <li>Long: <%= longURL %></li> -->
-      <li>tiny URL: <i class="terminal icon"></i>
-        <a href="/urls/<%=shortURL %>" > <%= shortURL %> </a> 
-        <ul>
-          <li> <i class="linkify icon"></i> URL: <%= longURL %> </li>
-        </ul>
-      </li>
+<h2 style="color:tomato; margin-top:2%">Your tinyURLs:</h2>
 
-    
-      <a href='/urls/<%=shortURL %>'>Edit Source URL</a>
-
-    <form method="POST" action="/urls/<%= shortURL %>/delete">
-    <i class="trash icon"></i><input name="<%= shortURL %>" type="submit" value="Delete">
-    </form>
+<% for (let url in urls) { %>
+<% let shortURL = url;  %>
+<% let longURL = urls[shortURL] %>
 
 
-    </ul>
-    <% } %>
-
-
-<% } else { %>
-<div class="ui middle aligned center aligned grid" style="background-color:#5A7247">
-  <div class="column" style="padding-top:10%">
-    <h1>Shorten your long URLs to 
-      <span style="color:beige"> *tiny*</span>, clean & readable links. </h1>
-    <h2>Sign in to get started!</h2>
+<div class="ui relaxed items">
+  <div class="item">
+    <div class="content">
+      <h3><i class="terminal icon"></i> tiny URL: <a style="color:tomato"  href="/urls/<%= shortURL %>"> <%= shortURL %> </a></h3>
+      <i class="linkify icon"></i> URL: <%= longURL %>
+      <form method="POST" action="/urls/<%= shortURL %>/delete">
+        <i class="trash icon"></i>
+        <input class="ui small black button" name="<%= shortURL %>" type="submit" value ="remove">
+      </form>
+      <a href='/urls/<%= shortURL %>''> Edit Source URL </a>
+    </div>
   </div>
 </div>
+
 <% } %>
 
+<% } else { %>
+
+    <div class="ui middle aligned center aligned grid">
+      <div class="column" style="padding-top:10%">
+        <h1>Shorten your long URLs to 
+          <span style="color:tomato"> *tiny*</span>, clean & readable links. </h1>
+        <h2>Sign in to get started!</h2>
+      </div>
+    </div>
+    
+<% } %>
   
 </div>
 </div>
-</body>
 
+<footer style="background-color:#CFB095; padding:2%">
+  <div class="ui middle aligned center aligned grid" style="padding:2%">
+    <form id="new-cut" method="GET" action="/urls/new">
+      <i class="code icon"></i>
+      <button class="ui black button" form="new-cut" type="submit">cut new URL</button>
+    </form>
+  </div>
+</footer>
+
+
+</body>
 </html>
