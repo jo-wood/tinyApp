@@ -1,47 +1,31 @@
 //'use-strict';
 
+////   SERVER   ////
 const express = require("express");
 const app = express();
-const cookieParser = require('cookie-parser');
-
 const PORT = 8080; // default port 8080
 
+////   HASH   ////
+const bcrypt = require('bcrypt');
+const cryptStore = require('./crypt-store');
+const hashPass = cryptStore.hashPass;
+
+////   PRIVATE DATABASES   ////
+const users = cryptStore.users;
+const urlDatabase = cryptStore.urlDatabase;
+
+////  MIDDLEWARE   ////
+
 const bodyParser = require("body-parser");
+const cookieSession = require('cookie-session');
 
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-
-app.use(cookieParser());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieSession( { name: 'session', keys: ['key1', 'key2'] } ));
 
 app.set('view engine', 'ejs');
+app.set('trust proxy', 1);
 
 
-//    DATABASES:   //
-
-const urlDatabase = {
-  "b2xVn2": {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: "userRandomID"
-  },
-  "lsm5xK": {
-      longURL: "http://www.google.com",
-      userID: "user2RandomID"
-  }
-};
-
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  }
-};
 
 //*************************************************************/
 //**                        HELPER FNs
@@ -114,7 +98,7 @@ return userUrls;
 
 app.get("/urls", (req, res) => {
 
-  let userKey = checkIfUserExists('id', req.cookies.user_id);
+  let userKey = checkIfUserExists('id', req.session.user_id);
   let userId = userKey.id;
   //return obj of this users short/longs (key/value)
   let userUrls = urlsForUser(userId);
@@ -143,7 +127,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
 
-  let displayUser = checkIfUserExists('id', req.cookies.user_id);
+  let displayUser = checkIfUserExists('id', req.session.user_id);
   let requestingUser = displayUser.email;
 
   //! only checking that a user_id cookie exists
@@ -184,7 +168,7 @@ app.get("/urls/:shortURL", (req, res) => {
     }
   }
     
-  let displayUser = checkIfUserExists('id', req.cookies.user_id);
+  let displayUser = checkIfUserExists('id', req.session.user_id);
   let userName = null;
 
   if (displayUser) {
@@ -207,7 +191,7 @@ app.get("/urls/:shortURL", (req, res) => {
 app.post("/urls/new", (req, res) => {
 
 
-  let displayUser = checkIfUserExists('id', req.cookies.user_id);
+  let displayUser = checkIfUserExists('id', req.session.user_id);
 
   //! only checking that a user_id cookie exists
   //! would still need to validate if this user is who their
@@ -223,10 +207,6 @@ app.post("/urls/new", (req, res) => {
   } else {
     res.render("login");
   }
-
-
-
-
 });
 
 //
@@ -234,7 +214,7 @@ app.post("/urls/new", (req, res) => {
 
 app.post("/urls/:shortURL/update", (req, res) => {
 
-  let displayUser = checkIfUserExists('id', req.cookies.user_id);
+  let displayUser = checkIfUserExists('id', req.session.user_id);
 
     if (displayUser) {
       let selectedShortUrl = Object.keys(req.body)[0];
@@ -258,6 +238,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
 
 ////////////////   LOGIN ROUTES   //////////////////
 
+
 app.get('/login', (req, res) => {
   res.render('login', { users });
 });
@@ -265,10 +246,9 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
 
   let email = req.body.email;
-  let password = req.body.password;
+  let verifyPassword = bcrypt.compareSync(req.body.password, users.userRandomID.password);
 
   let storedUser = checkIfUserExists('email', email);
-  let matchPassword = storedUser.password;
   let userId = storedUser.id;
 
   // if email or password are empty or email exists in db
@@ -278,7 +258,8 @@ app.post('/login', (req, res) => {
   } 
   
   if (email === storedUser.email) {
-    if (password === matchPassword ) {
+    if (verifyPassword) {
+      req.session.user_id = userId;
       res.cookie('user_id', userId);
       res.redirect('/urls');
     } else {
@@ -288,7 +269,7 @@ app.post('/login', (req, res) => {
 }); 
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/urls');
 });
 
@@ -305,8 +286,7 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   let email = req.body.email;
-  let password = req.body.password;
-
+  let hashedPassword = hashPass(req.body.password);;
   // if email or password are empty
   if (!email) {
     res.status(400).send('Invalid email.');
@@ -322,7 +302,7 @@ app.post('/register', (req, res) => {
     users[id] = {
       id: id, 
       email: email,
-      password: password
+      password: hashedPassword
     };
 
     res.cookie('user_id', id);

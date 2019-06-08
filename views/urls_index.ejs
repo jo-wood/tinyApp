@@ -6,23 +6,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <!-- Semantic UI -  CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"">
+
     <title>TinyApp</title>
   </head>
 
-  <header>
+  <header style="background-color:#5A7247">
     <%- include("partials/_header"); -%>
   </header>
 
 
-  <body style="font-size:20px; padding:50px;">
+  <body style="font-size:20px; padding:50px; background-color:#5A7247">
 
 <% if (userName) { %>
     <h1>Here are your short urls:</h1>
     <form method="GET" action="/urls/new">
-      <input type="submit" value="create a tinyURL">
+    <i class="code icon"></i><input type="submit" value="create a tinyURL">
     </form>
 
     <% for (let url in urls) { %>
@@ -30,10 +30,10 @@
     <% let longURL = urls[shortURL] %>
     <ul>
       <!-- <li>Long: <%= longURL %></li> -->
-      <li>tiny URL: 
+      <li>tiny URL: <i class="terminal icon"></i>
         <a href="/urls/<%=shortURL %>" > <%= shortURL %> </a> 
         <ul>
-          <li> for URL: <%= longURL %> </li>
+          <li> <i class="linkify icon"></i> URL: <%= longURL %> </li>
         </ul>
       </li>
 
@@ -41,8 +41,7 @@
       <a href='/urls/<%=shortURL %>'>Edit Source URL</a>
 
     <form method="POST" action="/urls/<%= shortURL %>/delete">
-      <input name="<%= shortURL %>" type="submit" value="Delete">
-  
+    <i class="trash icon"></i><input name="<%= shortURL %>" type="submit" value="Delete">
     </form>
 
 

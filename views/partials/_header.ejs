@@ -1,33 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <title>TinyApp</title>
-  </head>
-
-  <header>
-    <h1>TinyURL App!</h1>
-  <% if (!userName) { %>
-      <form action="/login" method="GET">
-        <input type="submit" value="Login">
-      </form>
-
-      <form action="/register" method="GET">
-        <input type="submit" value="Register">
-      </form>
+  <!-- Semantic UI -  CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"">
   
-<% } else { %>
+  <title>TinyApp</title>
+</head>
+
+<header style="background-color:#5A7247">
+  <h2 class="ui center aligned icon header">
+    <i class="hand scissors icon"></i>
+    tinyApp !
+  </h2>
+
+  <% if (!userName) { %>
+    <form action="/login" method="GET">
+    <i class="lock icon"></i> <input type="submit" value="Login">
+    </form>
+
+    <form action="/register" method="GET">
+    <i class="bell icon"></i> <input type="submit" value="Register">
+    </form>
+  
+  <% } else { %>
     <p>
-      Currently logged in as: <strong><%= userName %> </strong>
+      Currently logged in as: <i class="user circle icon"></i> <strong><%= userName %> </strong>
     </p>
     <form action="/logout" method="POST">
       <input type="submit" value="Logout">
     </form>
   <% } %>
-  </header>
+</header>

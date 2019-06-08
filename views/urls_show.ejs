@@ -6,9 +6,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <!-- Semantic UI -  CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"">
+
     <title>TinyApp</title>
   </head>
 
@@ -16,9 +16,9 @@
   <%- include("partials/_header"); -%>
 </header>
 
-<body style="font-size:20px; padding:50px;">
+<body style="font-size:20px; padding:50px; background-color:#5A7247">
 
-    <h3>ShortURL: 
+    <h3>ShortURL: <i class="terminal icon"></i>
       <strong><%= shortURL %></strong>
     </h3>
 
@@ -26,10 +26,12 @@
       <label for="edit-longURL"></label>
         <input type="text" name="<%= shortURL %>" placeholder="<%= longURL %>">
 
-      <button type="submit" form="edit-longFORM">Set Update</button>
+      <button class="ui black button" type="submit" form="edit-longFORM"><i class="paper plane icon"></i><i
+          class="edit icon"></i> Set
+        Update</button>
     </form>
 
-<button><a href="/urls">Main Page...</a></button>
+<button class="ui black button"><a href="/urls"><i class="archive icon"></i> Main Page...</a></button>
 
 </body>
 

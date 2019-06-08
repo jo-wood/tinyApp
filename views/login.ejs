@@ -5,32 +5,46 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <!-- Semantic UI -  CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"">
+
     <title>TinyApp</title>
   </head>
 
-<body>
 
-  <h3>TinyURL App Login:</h3>
-  <a href="/register">Register</a>
-  
-<form id="form-login" action="/login" method="POST">
+<header style="background-color:#5A7247">
+  <h2 class="ui center aligned icon header">
+    <i class="hand scissors icon"></i>
+    tinyApp <strong>LOGIN</strong>
+  </h2>
+</header>
 
-    <h4>Email:</h4>
-    <input class="form-control" type="email" name="email" placeholder="email@email.com"  style="width: 200px; margin: 1em">
+<body style="background-color:#5A7247">
 
+<div class="ui middle aligned center aligned grid" style="background-color:#5A7247">
+<div class="column">
 
-    <h4>Password:</h4>
-    <input class="form-control" type="password" name="password" style="width: 200px; margin: 1em">
+  <form class="ui form" id="form-login" action="/login" method="POST" style="background-color:#5A7247">
 
+    <div class="item">
+      <h3><i class="user icon"></i> Email:</h3>
+      <input type="email" name="email" placeholder="email@email.com" style="width: 200px; margin: 1em">
+    </div>
 
-  <button type="submit" form="form-login" class="btn btn-primary">Login</button>
+    <div class="item">
+      <h3><i class="lock icon"></i> Password:</h3>
+      <input class="ui input" type="password" name="password" style="width: 200px; margin: 1em">
+    </div>  
+
+    <button class="ui fluid large black submit button" type="submit" form="form-login">Login</button>
 
   </form>
 
+  <a class="ui orange button" href="/register">Or Register Here!</a>
 
-  
+</div>
+
+</div>
+
 </body>
 </html>
