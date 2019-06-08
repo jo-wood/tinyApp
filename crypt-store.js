@@ -45,10 +45,9 @@ const urlDatabase = {
 const currentUser = {
     id: null,
     email: null,
-    password: function (pass, cb) {
-      return cb(pass);
-    }
+    password: ""
 };
+
 
 
 //* also note, any new user's urls will be stored in this cookie

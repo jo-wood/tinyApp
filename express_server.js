@@ -348,7 +348,7 @@ app.post('/register', (req, res) => {
     // set props for currentUser obj from cryptStore
     currentUser.id = id;
     currentUser.email = email;
-    currentUser.password(inputPassword, hashPass);
+    currentUser.password = hashPass(inputPassword);
 
     // 'store' current user in users db
     users[id] = currentUser;
