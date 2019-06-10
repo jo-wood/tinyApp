@@ -39,7 +39,7 @@ As a twitter reader, I want to be able to visit sites via shortened links, so th
 
 ### Features to Try
 
-- Site Header:
+- **Site Header:**
   - if a user is logged in, the header shows:
     - the user's email
     - a logout button which makes a POST request to /logout
@@ -47,14 +47,17 @@ As a twitter reader, I want to be able to visit sites via shortened links, so th
     - a link to the login page (/login)
     - a link to the registration page (/register)
 
-- Register!
+- **Register!**
   - input an email and password and subsequently use this info to login to the app!
   - **NOTE! This will login will only last for one session as this app is not currently using an external database
 
-- Login
+- **Login**
   - login using these hardwired accounts to see the functionality of adding a new short URL that stays loaded upon logging off through cookie session - log back in to see!
     - email: user@example.com / password: "purple-monkey-dinosaur"
     - email: user2@example.com / password: "dishwasher-funk"
+  - an error message will be sent to the user if:
+    - if email does not match any registered users
+    - if the password is incorrect based on the user email (this will render first if any issue with inputs)
 
 !['Login Page'](https://github.com/jo-wood/tinyApp/blob/master/docs/login_pg.png)
 
@@ -65,123 +68,21 @@ As a twitter reader, I want to be able to visit sites via shortened links, so th
 
 !['Update the URL Link'](https://github.com/jo-wood/tinyApp/blob/master/docs/short_url_page.png)
 
-
 ### Additional Features
 
-- `GET /urls`
+- **Once logged in**:
+  - click on `cut new url` to see the app's main functionality - turning your long url of choice into a *tiny* url link
+  - once submitted, user will be redirected to their homepage and see their newly created shortURL & the associated longURL
 
-  - if user is logged in:
-    - returns HTML with:
-    - the site header (see Display Requirements above)
-    - a list (or table) of URLs the user has created, each list item containing:
-      - a short URL 
-      - the short URL's matching long URL
-      - an edit button which makes a GET request to /urls/:id
-      - a delete button which makes a POST request to /urls/:id/delete
-    - a link to "Create a New Short Link" which makes a GET request to /urls/new
-  - if user is not logged in:
-    - returns HTML with a relevant error message
+- *Note: only the user that created the  short / long URL has access to this route (/urls and urls/shortURL page)*
 
-- GET /urls/new
+  - the user can update the longURL link through the 'Edit Source URL' option on the main page. 
+    - this edit source will redirect the user to the page that pertains strictly to that short & long URL
+    - no one accept the logged in user can access this edit/update page
+  - the user may also **delete** the short URL on the main page through the `remove` button
 
-- if user is logged in:
-  - returns HTML with:
-  - the site header (see Display Requirements above)
-- a form which contains:
-  - a text input field for the original (long) URL
-  - a submit button which makes a POST request to /urls
-- if user is not logged in:
-  - redirects to the /login page
+- **Logging out**
+  - the user may log out, and any newly created URL's will remain on their homepage upon logging in (*NOTE: this will only occur if the server is not restarted as this app is not in production mode)
 
-- GET /urls/:id
-
-- if user is logged in and owns the URL for the given ID:
-  - returns HTML with:
-  - the site header (see Display Requirements above)
-  - the short URL (for the given ID)
-  - a form which contains:
-  - the corresponding long URL
-  - an update button which makes a POST request to /urls/:id
-- if a URL for the given ID does not exist:
-  - (Minor) returns HTML with a relevant error message
-- if user is not logged in:
-  - returns HTML with a relevant error message
-  - if user is logged it but does not own the URL with the given ID:
-  - returns HTML with a relevant error message
-
-- GET /u/:id
-
-- if URL for the given ID exists:
-  - redirects to the corresponding long URL
-
-- POST /urls
-
-- if user is logged in:
-- generates a short URL, saves it, and associates it with the user
-- redirects to /urls/:id, where :id matches the ID of the newly saved URL **changed this to redirect to main urls**
-- if user is not logged in:
-  - (Minor) returns HTML with a relevant error message
-
-- POST /urls/:id
-
-- if user is logged in and owns the URL for the given ID:
-  - updates the URL
-  - redirects to /urls
-- if user is not logged in:
-  - (Minor) returns HTML with a relevant error message
-  - if user is logged it but does not own the URL for the given ID:
-  - (Minor) returns HTML with a relevant error message
-
-- POST /urls/:id/delete
-  - if user is logged in and owns the URL for the given ID:
-  - deletes the URL
-  - redirects to /urls
-- if user is not logged in:
-  - (Minor) returns HTML with a relevant error message
-  - if user is logged it but does not own the URL for the given ID:
-  - (Minor) returns HTML with a relevant error message
-
-- GET /login
-
-- if user is logged in:
-  - (Minor) redirects to /urls
-- if user is not logged in:
-  - returns HTML with:
-  - a form which contains:
-  - input fields for email and password
-  - submit button that makes a POST request to /login
-
-- GET /register
-
-- if user is logged in:
-  - (Minor) redirects to /urls
-- if user is not logged in:
-  - returns HTML with:
-  - a form which contains:
-  - input fields for email and password
-  - a register button that makes a POST request to /register
-
-- POST /login
-
-- if email and password params match an existing user:
-  - sets a cookie
-  - redirects to /urls
-- if email and password params don't match an existing user:
-  - returns HTML with a relevant error message
-  - POST /register
-
-- if email or password are empty:
-  - returns HTML with a relevant error message
-- if email already exists:
-  - returns HTML with a relevant error message
-
-- otherwise:
-  - creates a new user
-  - encrypts the new user's password with bcrypt
-  - sets a cookie
-  - redirects to /urls
-
-- POST /logout
-
-  - deletes cookie
-  - redirects to /urls
+- The shortURL is available to any user that access its `/u/shortURL` link within the browser.
+  - This route will redirect any user to the intended longer URLs true domain & route
